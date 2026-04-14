@@ -1,0 +1,44 @@
+{
+  "app": { "name": "TicketHub" },
+  "nav": {
+    "adminPanel": "ਐਡਮਿਨ ਪੈਨਲ",
+    "globalBookings": "ਸਾਰੀਆਂ ਬੁਕਿੰਗਾਂ",
+    "transactions": "ਲੈਣ-ਦੇਣ",
+    "refundRequests": "ਰਿਫੰਡ ਬੇਨਤੀਆਂ",
+    "userDashboard": "ਯੂਜ਼ਰ ਡੈਸ਼ਬੋਰਡ",
+    "myBookedTickets": "ਮੇਰੇ ਟਿਕਟ",
+    "myWallet": "ਮੇਰਾ ਵੌਲਿਟ",
+    "login": "ਲੌਗਿਨ",
+    "register": "ਰਜਿਸਟਰ",
+    "logout": "ਲੌਗ ਆਉਟ",
+    "language": "ਭਾਸ਼ਾ"
+  },
+  "login": {
+    "title": "ਮੁੜ ਜੀ ਆਇਆਂ ਨੂੰ",
+    "email": "ਈਮੇਲ",
+    "password": "ਪਾਸਵਰਡ",
+    "userLogin": "ਯੂਜ਼ਰ ਲੌਗਿਨ",
+    "adminLogin": "ਐਡਮਿਨ ਲੌਗਿਨ",
+    "cta": "ਸੁਰੱਖਿਅਤ ਲੌਗਿਨ",
+    "firstTime": "ਪਹਿਲੀ ਵਾਰ ਆਏ ਹੋ?",
+    "goRegister": "ਯੂਜ਼ਰ / ਐਡਮਿਨ ਰਜਿਸਟ੍ਰੇਸ਼ਨ ਤੇ ਜਾਓ",
+    "invalidCredentials": "ਗਲਤ ਜਾਣਕਾਰੀ। ਈਮੇਲ/ਪਾਸਵਰਡ ਚੈਕ ਕਰੋ।"
+  },
+  "signup": {
+    "title": "ਹਬ ਵਿੱਚ ਸ਼ਾਮਲ ਹੋਵੋ",
+    "fullName": "ਪੂਰਾ ਨਾਮ",
+    "email": "ਈਮੇਲ",
+    "password": "ਪਾਸਵਰਡ",
+    "userRegister": "ਯੂਜ਼ਰ ਰਜਿਸਟਰ",
+    "adminRegister": "ਐਡਮਿਨ ਰਜਿਸਟਰ",
+    "cta": "ਪ੍ਰੋਫਾਈਲ ਬਣਾਓ",
+    "already": "ਪਹਿਲਾਂ ਤੋਂ ਅਕਾਊਂਟ ਹੈ?",
+    "goLogin": "ਯੂਜ਼ਰ / ਐਡਮਿਨ ਲੌਗਿਨ ਤੇ ਜਾਓ"
+  },
+  "dashboard": {
+    "discover": "ਇਵੈਂਟ ਖੋਜੋ",
+    "wallet": "ਵੌਲਿਟ",
+    "myTickets": "ਮੇਰੇ ਟਿਕਟ"
+  }
+}
+

@@ -1,0 +1,44 @@
+{
+  "app": { "name": "TicketHub" },
+  "nav": {
+    "adminPanel": "अ‍ॅडमिन पॅनेल",
+    "globalBookings": "सर्व बुकिंग्स",
+    "transactions": "व्यवहार",
+    "refundRequests": "परतावा विनंत्या",
+    "userDashboard": "युजर डॅशबोर्ड",
+    "myBookedTickets": "माझी तिकिटे",
+    "myWallet": "माझे वॉलेट",
+    "login": "लॉगिन",
+    "register": "नोंदणी",
+    "logout": "लॉग आउट",
+    "language": "भाषा"
+  },
+  "login": {
+    "title": "पुन्हा स्वागत आहे",
+    "email": "ईमेल",
+    "password": "पासवर्ड",
+    "userLogin": "युजर लॉगिन",
+    "adminLogin": "अ‍ॅडमिन लॉगिन",
+    "cta": "सुरक्षित लॉगिन",
+    "firstTime": "पहिल्यांदा आला आहात?",
+    "goRegister": "युजर / अ‍ॅडमिन नोंदणीला जा",
+    "invalidCredentials": "चुकीची माहिती. ईमेल/पासवर्ड तपासा."
+  },
+  "signup": {
+    "title": "हबमध्ये सामील व्हा",
+    "fullName": "पूर्ण नाव",
+    "email": "ईमेल",
+    "password": "पासवर्ड",
+    "userRegister": "युजर नोंदणी",
+    "adminRegister": "अ‍ॅडमिन नोंदणी",
+    "cta": "प्रोफाइल तयार करा",
+    "already": "आधीच खाते आहे?",
+    "goLogin": "युजर / अ‍ॅडमिन लॉगिनला जा"
+  },
+  "dashboard": {
+    "discover": "इव्हेंट्स शोधा",
+    "wallet": "वॉलेट",
+    "myTickets": "माझी तिकिटे"
+  }
+}
+

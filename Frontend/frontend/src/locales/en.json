@@ -1,0 +1,46 @@
+{
+  "app": {
+    "name": "TicketHub"
+  },
+  "nav": {
+    "adminPanel": "Admin Panel",
+    "globalBookings": "Global Bookings",
+    "transactions": "Transactions",
+    "refundRequests": "Refund Requests",
+    "userDashboard": "User Dashboard",
+    "myBookedTickets": "My Booked Tickets",
+    "myWallet": "My Wallet",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Log out",
+    "language": "Language"
+  },
+  "login": {
+    "title": "Welcome Back",
+    "email": "Email Address",
+    "password": "Password",
+    "userLogin": "User Login",
+    "adminLogin": "Admin Login",
+    "cta": "Secure Login",
+    "firstTime": "First time here?",
+    "goRegister": "Go to User / Admin Registration",
+    "invalidCredentials": "Invalid credentials. Please check email/password."
+  },
+  "signup": {
+    "title": "Join the Hub",
+    "fullName": "Full Name",
+    "email": "Email Address",
+    "password": "Password",
+    "userRegister": "User Register",
+    "adminRegister": "Admin Register",
+    "cta": "Create Profile",
+    "already": "Already one of us?",
+    "goLogin": "Go to User / Admin Login"
+  },
+  "dashboard": {
+    "discover": "Discover Events",
+    "wallet": "Wallet",
+    "myTickets": "My Tickets"
+  }
+}
+

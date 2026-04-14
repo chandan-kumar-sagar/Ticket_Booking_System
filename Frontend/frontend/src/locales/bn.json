@@ -1,0 +1,44 @@
+{
+  "app": { "name": "TicketHub" },
+  "nav": {
+    "adminPanel": "অ্যাডমিন প্যানেল",
+    "globalBookings": "সব বুকিং",
+    "transactions": "লেনদেন",
+    "refundRequests": "রিফান্ড অনুরোধ",
+    "userDashboard": "ইউজার ড্যাশবোর্ড",
+    "myBookedTickets": "আমার টিকিট",
+    "myWallet": "আমার ওয়ালেট",
+    "login": "লগইন",
+    "register": "রেজিস্টার",
+    "logout": "লগ আউট",
+    "language": "ভাষা"
+  },
+  "login": {
+    "title": "আবারও স্বাগতম",
+    "email": "ইমেইল ঠিকানা",
+    "password": "পাসওয়ার্ড",
+    "userLogin": "ইউজার লগইন",
+    "adminLogin": "অ্যাডমিন লগইন",
+    "cta": "সিকিউর লগইন",
+    "firstTime": "প্রথমবার এসেছেন?",
+    "goRegister": "ইউজার / অ্যাডমিন রেজিস্ট্রেশনে যান",
+    "invalidCredentials": "ভুল ক্রেডেনশিয়াল। ইমেইল/পাসওয়ার্ড চেক করুন।"
+  },
+  "signup": {
+    "title": "হাবে যোগ দিন",
+    "fullName": "পূর্ণ নাম",
+    "email": "ইমেইল ঠিকানা",
+    "password": "পাসওয়ার্ড",
+    "userRegister": "ইউজার রেজিস্টার",
+    "adminRegister": "অ্যাডমিন রেজিস্টার",
+    "cta": "প্রোফাইল তৈরি করুন",
+    "already": "আগেই অ্যাকাউন্ট আছে?",
+    "goLogin": "ইউজার / অ্যাডমিন লগইনে যান"
+  },
+  "dashboard": {
+    "discover": "ইভেন্টগুলো দেখুন",
+    "wallet": "ওয়ালেট",
+    "myTickets": "আমার টিকিট"
+  }
+}
+

@@ -1,0 +1,44 @@
+{
+  "app": { "name": "TicketHub" },
+  "nav": {
+    "adminPanel": "അഡ്മിൻ പാനൽ",
+    "globalBookings": "എല്ലാ ബുക്കിംഗുകൾ",
+    "transactions": "ഇടപാടുകൾ",
+    "refundRequests": "റീഫണ്ട് അഭ്യർത്ഥനകൾ",
+    "userDashboard": "യൂസർ ഡാഷ്ബോർഡ്",
+    "myBookedTickets": "എന്റെ ടിക്കറ്റുകൾ",
+    "myWallet": "എന്റെ വാലറ്റ്",
+    "login": "ലോഗിൻ",
+    "register": "രജിസ്റ്റർ",
+    "logout": "ലോഗ് ഔട്ട്",
+    "language": "ഭാഷ"
+  },
+  "login": {
+    "title": "വീണ്ടും സ്വാഗതം",
+    "email": "ഇമെയിൽ",
+    "password": "പാസ്‌വേഡ്",
+    "userLogin": "യൂസർ ലോഗിൻ",
+    "adminLogin": "അഡ്മിൻ ലോഗിൻ",
+    "cta": "സുരക്ഷിത ലോഗിൻ",
+    "firstTime": "ആദ്യമായാണോ ഇവിടെ?",
+    "goRegister": "യൂസർ / അഡ്മിൻ രജിസ്ട്രേഷനിലേക്ക് പോകുക",
+    "invalidCredentials": "അസാധുവായ ക്രെഡൻഷ്യൽസ്. ഇമെയിൽ/പാസ്‌വേഡ് പരിശോധിക്കുക."
+  },
+  "signup": {
+    "title": "ഹബ്ബിൽ ചേരുക",
+    "fullName": "പൂർണ്ണ പേര്",
+    "email": "ഇമെയിൽ",
+    "password": "പാസ്‌വേഡ്",
+    "userRegister": "യൂസർ രജിസ്റ്റർ",
+    "adminRegister": "അഡ്മിൻ രജിസ്റ്റർ",
+    "cta": "പ്രൊഫൈൽ സൃഷ്ടിക്കുക",
+    "already": "ഇതിനകം അക്കൗണ്ട് ഉണ്ടോ?",
+    "goLogin": "യൂസർ / അഡ്മിൻ ലോഗിനിലേക്ക് പോകുക"
+  },
+  "dashboard": {
+    "discover": "ഇവന്റുകൾ കണ്ടെത്തുക",
+    "wallet": "വാലറ്റ്",
+    "myTickets": "എന്റെ ടിക്കറ്റുകൾ"
+  }
+}
+

@@ -1,0 +1,44 @@
+{
+  "app": { "name": "TicketHub" },
+  "nav": {
+    "adminPanel": "అడ్మిన్ ప్యానెల్",
+    "globalBookings": "అన్ని బుకింగ్స్",
+    "transactions": "లావాదేవీలు",
+    "refundRequests": "రిఫండ్ అభ్యర్థనలు",
+    "userDashboard": "యూజర్ డ్యాష్‌బోర్డ్",
+    "myBookedTickets": "నా టికెట్లు",
+    "myWallet": "నా వాలెట్",
+    "login": "లాగిన్",
+    "register": "రిజిస్టర్",
+    "logout": "లాగ్ అవుట్",
+    "language": "భాష"
+  },
+  "login": {
+    "title": "మళ్లీ స్వాగతం",
+    "email": "ఇమెయిల్",
+    "password": "పాస్‌వర్డ్",
+    "userLogin": "యూజర్ లాగిన్",
+    "adminLogin": "అడ్మిన్ లాగిన్",
+    "cta": "సురక్షిత లాగిన్",
+    "firstTime": "మొదటిసారి వచ్చారా?",
+    "goRegister": "యూజర్ / అడ్మిన్ రిజిస్ట్రేషన్‌కు వెళ్లండి",
+    "invalidCredentials": "తప్పుడు వివరాలు. ఇమెయిల్/పాస్‌వర్డ్ తనిఖీ చేయండి."
+  },
+  "signup": {
+    "title": "హబ్‌లో చేరండి",
+    "fullName": "పూర్తి పేరు",
+    "email": "ఇమెయిల్",
+    "password": "పాస్‌వర్డ్",
+    "userRegister": "యూజర్ రిజిస్టర్",
+    "adminRegister": "అడ్మిన్ రిజిస్టర్",
+    "cta": "ప్రొఫైల్ సృష్టించండి",
+    "already": "ఇప్పటికే ఖాతా ఉందా?",
+    "goLogin": "యూజర్ / అడ్మిన్ లాగిన్‌కు వెళ్లండి"
+  },
+  "dashboard": {
+    "discover": "ఈవెంట్లను కనుగొనండి",
+    "wallet": "వాలెట్",
+    "myTickets": "నా టికెట్లు"
+  }
+}
+

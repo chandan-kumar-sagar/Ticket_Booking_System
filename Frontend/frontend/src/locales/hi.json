@@ -1,0 +1,46 @@
+{
+  "app": {
+    "name": "TicketHub"
+  },
+  "nav": {
+    "adminPanel": "एडमिन पैनल",
+    "globalBookings": "सभी बुकिंग्स",
+    "transactions": "लेन-देन",
+    "refundRequests": "रिफंड अनुरोध",
+    "userDashboard": "यूज़र डैशबोर्ड",
+    "myBookedTickets": "मेरे टिकट",
+    "myWallet": "मेरा वॉलेट",
+    "login": "लॉगिन",
+    "register": "रजिस्टर",
+    "logout": "लॉग आउट",
+    "language": "भाषा"
+  },
+  "login": {
+    "title": "वापसी पर स्वागत है",
+    "email": "ईमेल",
+    "password": "पासवर्ड",
+    "userLogin": "यूज़र लॉगिन",
+    "adminLogin": "एडमिन लॉगिन",
+    "cta": "सुरक्षित लॉगिन",
+    "firstTime": "पहली बार आए हैं?",
+    "goRegister": "यूज़र / एडमिन रजिस्ट्रेशन पर जाएँ",
+    "invalidCredentials": "गलत क्रेडेंशियल्स। कृपया ईमेल/पासवर्ड जाँचें।"
+  },
+  "signup": {
+    "title": "हब से जुड़ें",
+    "fullName": "पूरा नाम",
+    "email": "ईमेल",
+    "password": "पासवर्ड",
+    "userRegister": "यूज़र रजिस्टर",
+    "adminRegister": "एडमिन रजिस्टर",
+    "cta": "प्रोफ़ाइल बनाएँ",
+    "already": "पहले से अकाउंट है?",
+    "goLogin": "यूज़र / एडमिन लॉगिन पर जाएँ"
+  },
+  "dashboard": {
+    "discover": "इवेंट्स देखें",
+    "wallet": "वॉलेट",
+    "myTickets": "मेरे टिकट"
+  }
+}
+

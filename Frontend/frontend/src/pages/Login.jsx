@@ -9,12 +9,14 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
   const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       setError('');
+      setSubmitting(true);
       const url = isAdmin ? '/api/v1/Admin/login' : '/api/v1/user/login';
       const { data } = await API.post(url, { email, password });
       
@@ -28,6 +30,8 @@ const Login = () => {
     } catch (err) {
       const msg = err.response?.data?.msg;
       setError(msg || t('login.invalidCredentials'));
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -69,6 +73,7 @@ const Login = () => {
             value={email}
             onChange={e => { setEmail(e.target.value); if (error) setError(''); }}
             required
+            disabled={submitting}
           />
           <input
             className="bg-white border border-gray-200 shadow-sm outline-none focus:ring-2 focus:ring-violet-500/60 focus:border-violet-300 p-4 rounded-2xl transition font-semibold text-gray-900 placeholder-gray-500"
@@ -77,6 +82,7 @@ const Login = () => {
             value={password}
             onChange={e => { setPassword(e.target.value); if (error) setError(''); }}
             required
+            disabled={submitting}
           />
           
           <div className="flex bg-gray-50 p-1.5 rounded-2xl border border-gray-200 mb-1 shadow-inner">
@@ -105,7 +111,7 @@ const Login = () => {
           </div>
           
           <button type="submit" className="mt-3 w-full bg-gradient-to-r from-violet-600 via-fuchsia-600 to-indigo-600 text-white font-extrabold py-4 rounded-2xl shadow-[0_10px_20px_rgba(109,40,217,0.25)] hover:shadow-[0_15px_25px_rgba(109,40,217,0.35)] hover:-translate-y-1 active:translate-y-0 transition-all duration-300">
-            {t('login.cta')}
+            {submitting ? 'Loading…' : t('login.cta')}
           </button>
         </form>
         

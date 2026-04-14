@@ -9,11 +9,13 @@ const Signup = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
+      setSubmitting(true);
       const endpoint = isAdmin ? '/api/v1/Admin/admin/signup' : '/api/v1/user/user/signup';
       const { data } = await API.post(endpoint, { name, email, password });
       
@@ -21,6 +23,8 @@ const Signup = () => {
       navigate('/');
     } catch (err) {
       alert(err.response?.data?.msg || 'Signup failed');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -49,6 +53,7 @@ const Signup = () => {
             value={name}
             onChange={e => setName(e.target.value)}
             required
+            disabled={submitting}
           />
           <input
             className="bg-white border border-gray-200 shadow-sm outline-none focus:ring-2 focus:ring-violet-500/60 focus:border-violet-300 p-4 rounded-2xl transition font-semibold text-gray-900 placeholder-gray-500"
@@ -57,6 +62,7 @@ const Signup = () => {
             value={email}
             onChange={e => setEmail(e.target.value)}
             required
+            disabled={submitting}
           />
           <input
             className="bg-white border border-gray-200 shadow-sm outline-none focus:ring-2 focus:ring-violet-500/60 focus:border-violet-300 p-4 rounded-2xl transition font-semibold text-gray-900 placeholder-gray-500"
@@ -65,6 +71,7 @@ const Signup = () => {
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
+            disabled={submitting}
           />
           
           <div className="flex bg-gray-50 p-1.5 rounded-2xl border border-gray-200 mb-1 shadow-inner">
@@ -93,7 +100,7 @@ const Signup = () => {
           </div>
           
           <button type="submit" className="mt-3 w-full bg-gradient-to-r from-violet-600 via-fuchsia-600 to-indigo-600 text-white font-extrabold py-4 rounded-2xl shadow-[0_10px_20px_rgba(109,40,217,0.25)] hover:shadow-[0_15px_25px_rgba(109,40,217,0.35)] hover:-translate-y-1 active:translate-y-0 transition-all duration-300">
-            {t('signup.cta')}
+            {submitting ? 'Loading…' : t('signup.cta')}
           </button>
         </form>
         

@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import API from '../api/api';
 import { MiniBarChart, Sparkline } from '../components/Charts';
+import { SkeletonCardGrid, SkeletonStatsGrid, SkeletonText } from '../components/Skeleton';
 
 const AdminDashboard = () => {
   const [events, setEvents] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [eventUsers, setEventUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [openEventId, setOpenEventId] = useState(null);
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
@@ -31,11 +33,19 @@ const AdminDashboard = () => {
   };
 
   useEffect(() => {
+    setLoading(true);
     Promise.all([
       fetchEvents(),
       fetchTransactions(),
       fetchEventUsers()
-    ]).catch(err => console.error(err));
+    ])
+      .catch(err => {
+        console.error(err);
+        setEvents([]);
+        setTransactions([]);
+        setEventUsers([]);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   const handleCreateEvent = async (e) => {
@@ -147,29 +157,33 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white/70 backdrop-blur rounded-3xl border border-white/60 p-5 shadow-sm">
-            <p className="text-xs font-extrabold tracking-widest text-gray-400 uppercase">Your events</p>
-            <p className="mt-2 text-3xl font-black text-gray-900">{totalEvents}</p>
-          </div>
-          <div className="bg-white/70 backdrop-blur rounded-3xl border border-white/60 p-5 shadow-sm">
-            <p className="text-xs font-extrabold tracking-widest text-gray-400 uppercase">Total seats</p>
-            <p className="mt-2 text-3xl font-black text-gray-900">{totalSeatsCount}</p>
-          </div>
-          <div className="bg-white/70 backdrop-blur rounded-3xl border border-white/60 p-5 shadow-sm">
-            <p className="text-xs font-extrabold tracking-widest text-gray-400 uppercase">Potential revenue</p>
-            <p className="mt-2 text-3xl font-black text-gray-900">₹{potentialRevenue}</p>
-          </div>
-          <div className="bg-white/70 backdrop-blur rounded-3xl border border-white/60 p-5 shadow-sm">
-            <p className="text-xs font-extrabold tracking-widest text-gray-400 uppercase">Tx volume</p>
-            <div className="mt-2 flex items-center justify-between gap-3">
-              <p className="text-3xl font-black text-gray-900">{totalTx}</p>
-              <div className="flex-1">
-                <Sparkline values={txAmounts} stroke="#16a34a" fill="rgba(22,163,74,0.12)" />
+        {loading ? (
+          <SkeletonStatsGrid items={4} />
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-white/70 backdrop-blur rounded-3xl border border-white/60 p-5 shadow-sm">
+              <p className="text-xs font-extrabold tracking-widest text-gray-400 uppercase">Your events</p>
+              <p className="mt-2 text-3xl font-black text-gray-900">{totalEvents}</p>
+            </div>
+            <div className="bg-white/70 backdrop-blur rounded-3xl border border-white/60 p-5 shadow-sm">
+              <p className="text-xs font-extrabold tracking-widest text-gray-400 uppercase">Total seats</p>
+              <p className="mt-2 text-3xl font-black text-gray-900">{totalSeatsCount}</p>
+            </div>
+            <div className="bg-white/70 backdrop-blur rounded-3xl border border-white/60 p-5 shadow-sm">
+              <p className="text-xs font-extrabold tracking-widest text-gray-400 uppercase">Potential revenue</p>
+              <p className="mt-2 text-3xl font-black text-gray-900">₹{potentialRevenue}</p>
+            </div>
+            <div className="bg-white/70 backdrop-blur rounded-3xl border border-white/60 p-5 shadow-sm">
+              <p className="text-xs font-extrabold tracking-widest text-gray-400 uppercase">Tx volume</p>
+              <div className="mt-2 flex items-center justify-between gap-3">
+                <p className="text-3xl font-black text-gray-900">{totalTx}</p>
+                <div className="flex-1">
+                  <Sparkline values={txAmounts} stroke="#16a34a" fill="rgba(22,163,74,0.12)" />
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="lg:col-span-2 bg-white/70 backdrop-blur rounded-3xl border border-white/60 p-5 shadow-sm">
@@ -225,7 +239,11 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        {eventUsers.length === 0 ? (
+        {loading ? (
+          <div className="rounded-3xl border border-gray-100 bg-white p-6">
+            <SkeletonText lines={4} />
+          </div>
+        ) : eventUsers.length === 0 ? (
           <div className="rounded-3xl border border-gray-100 bg-white p-6 text-gray-500 font-semibold">
             No confirmed bookings yet for your events.
           </div>
@@ -295,44 +313,48 @@ const AdminDashboard = () => {
         </h2>
         <div className="hidden sm:block h-px w-20 bg-gradient-to-r from-transparent via-indigo-400 to-transparent" />
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {events.map(evt => (
-          <div key={evt._id} className="p-6 bg-white rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-xl transition-shadow relative overflow-hidden">
-            {/* Subtle card watermark */}
-            <img
-              src="/brand-ticket.png"
-              alt=""
-              aria-hidden="true"
-              className="pointer-events-none absolute -right-10 -bottom-12 w-72 opacity-[0.07] rotate-[-10deg] select-none"
-            />
-            <div>
-              <h3 className="text-xl font-bold text-indigo-600 mb-2">{evt.name}</h3>
-              <p className="font-mono text-xs text-gray-400 break-all bg-gray-50 p-2 rounded-lg border border-gray-100">{evt._id}</p>
-            </div>
-            <div className="mt-6 flex justify-between items-end border-t border-gray-100 pt-5">
-              <div className="flex flex-col">
-                <span className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Capacity</span>
-                <span className="text-gray-800 font-extrabold">{evt.totalSeats} Seats</span>
+      {loading ? (
+        <SkeletonCardGrid items={6} className="gap-6" />
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {events.map(evt => (
+            <div key={evt._id} className="p-6 bg-white rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-xl transition-shadow relative overflow-hidden">
+              {/* Subtle card watermark */}
+              <img
+                src="/brand-ticket.png"
+                alt=""
+                aria-hidden="true"
+                className="pointer-events-none absolute -right-10 -bottom-12 w-72 opacity-[0.07] rotate-[-10deg] select-none"
+              />
+              <div>
+                <h3 className="text-xl font-bold text-indigo-600 mb-2">{evt.name}</h3>
+                <p className="font-mono text-xs text-gray-400 break-all bg-gray-50 p-2 rounded-lg border border-gray-100">{evt._id}</p>
               </div>
-              <div className="flex flex-col text-right">
-                <span className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Price</span>
-                <span className="text-indigo-600 font-extrabold text-xl">₹{evt.price}</span>
+              <div className="mt-6 flex justify-between items-end border-t border-gray-100 pt-5">
+                <div className="flex flex-col">
+                  <span className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Capacity</span>
+                  <span className="text-gray-800 font-extrabold">{evt.totalSeats} Seats</span>
+                </div>
+                <div className="flex flex-col text-right">
+                  <span className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Price</span>
+                  <span className="text-indigo-600 font-extrabold text-xl">₹{evt.price}</span>
+                </div>
               </div>
-            </div>
 
-            <div className="mt-5 flex items-center justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => handleDeleteEvent(evt._id, evt.name)}
-                disabled={deletingEventId === evt._id}
-                className="rounded-xl px-4 py-2 font-extrabold text-white bg-red-600 hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed transition shadow-sm"
-              >
-                {deletingEventId === evt._id ? 'Deleting…' : 'Delete'}
-              </button>
+              <div className="mt-5 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleDeleteEvent(evt._id, evt.name)}
+                  disabled={deletingEventId === evt._id}
+                  className="rounded-xl px-4 py-2 font-extrabold text-white bg-red-600 hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed transition shadow-sm"
+                >
+                  {deletingEventId === evt._id ? 'Deleting…' : 'Delete'}
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

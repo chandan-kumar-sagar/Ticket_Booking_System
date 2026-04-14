@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import API from "../api/api";
 import SeatGrid from "../components/SeatGrid";
+import { Skeleton } from "../components/Skeleton";
 
 const SeatSelection = () => {
   const { eventId } = useParams();
@@ -11,6 +12,7 @@ const SeatSelection = () => {
   const [basePrice, setBasePrice] = useState(150);
   const [eventName, setEventName] = useState('');
   const [bookingError, setBookingError] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchEventAndSeats();
@@ -18,6 +20,7 @@ const SeatSelection = () => {
 
   const fetchEventAndSeats = async () => {
     try {
+      setLoading(true);
       const [eventRes, seatsRes] = await Promise.all([
         API.get(`/api/v1/user/data/event/${eventId}`),
         API.get(`/api/v1/user/data/seats/${eventId}`)
@@ -33,6 +36,9 @@ const SeatSelection = () => {
       setSeats(safeSeats);
     } catch (err) {
       console.error(err);
+      setSeats([]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -61,11 +67,17 @@ const SeatSelection = () => {
       <div className="flex-1 w-full">
         <h1 className="text-3xl font-extrabold text-gray-900 mb-2">Select Your Seats</h1>
         <p className="text-gray-500 font-medium mb-8">
-          {eventName ? <span className="font-extrabold text-gray-800">{eventName}</span> : null}
+          {loading ? (
+            <span className="inline-block align-middle">
+              <Skeleton className="h-5 w-48 rounded-lg" />
+            </span>
+          ) : (
+            eventName ? <span className="font-extrabold text-gray-800">{eventName}</span> : null
+          )}
           {eventName ? ' — ' : null}
           Click on seats to add/remove them from your selection.
         </p>
-        <SeatGrid seats={seats} selectedSeats={selectedSeats} onSelectSeat={handleSelectSeat} />
+        <SeatGrid loading={loading} seats={seats} selectedSeats={selectedSeats} onSelectSeat={handleSelectSeat} />
       </div>
       
       <div className="w-full lg:w-96 bg-white/80 backdrop-blur-md p-6 sm:p-8 rounded-3xl shadow-xl shadow-violet-500/5 border border-white lg:sticky lg:top-24 flex flex-col">
@@ -78,7 +90,7 @@ const SeatSelection = () => {
           </div>
           <div className="flex justify-between items-center text-sm font-medium">
             <span className="text-gray-500">Price per ticket</span>
-            <span className="text-gray-800">₹{basePrice}</span>
+            {loading ? <Skeleton className="h-4 w-16 rounded-md" /> : <span className="text-gray-800">₹{basePrice}</span>}
           </div>
         </div>
 
@@ -86,7 +98,11 @@ const SeatSelection = () => {
         
         <div className="flex justify-between items-end mb-8">
           <span className="text-gray-600 font-bold">Total</span>
-          <span className="text-4xl font-extrabold text-gray-900">₹{totalAmount}</span>
+          {loading ? (
+            <Skeleton className="h-10 w-28 rounded-xl" />
+          ) : (
+            <span className="text-4xl font-extrabold text-gray-900">₹{totalAmount}</span>
+          )}
         </div>
 
         {bookingError && (
@@ -98,7 +114,7 @@ const SeatSelection = () => {
         <button 
           type="button"
           onClick={handleBook}
-          disabled={selectedSeats.length === 0}
+          disabled={loading || selectedSeats.length === 0}
           className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold py-4 rounded-xl disabled:opacity-50 hover:shadow-lg hover:shadow-violet-500/30 hover:scale-[1.02] transition-all"
         >
           Confirm & Pay

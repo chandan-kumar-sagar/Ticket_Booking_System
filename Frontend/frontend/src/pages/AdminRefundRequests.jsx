@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import API from '../api/api';
+import { SkeletonTicketList } from '../components/Skeleton';
 
 const AdminRefundRequests = () => {
   const [requests, setRequests] = useState([]);
@@ -54,12 +55,12 @@ const AdminRefundRequests = () => {
       )}
 
       {loading && (
-        <div className="mb-4 rounded-3xl border border-gray-100 bg-white/70 px-6 py-5 text-gray-500 font-semibold">
-          Loading refund requests...
+        <div className="mb-4">
+          <SkeletonTicketList items={2} />
         </div>
       )}
 
-      {(!requests || requests.length === 0) && (
+      {!loading && (!requests || requests.length === 0) && (
         <div className="p-6 text-gray-500 bg-white rounded-3xl border border-gray-100 shadow-sm">
           No refund requests found.
         </div>

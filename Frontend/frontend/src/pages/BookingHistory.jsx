@@ -1,13 +1,20 @@
 import { useState, useEffect } from 'react';
 import API from '../api/api';
+import { SkeletonTicketList } from '../components/Skeleton';
 
 const BookingHistory = () => {
   const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchBookings = () => {
+    setLoading(true);
     API.get('/api/v1/user/data/bookings')
-      .then(res => setBookings(res.data))
-      .catch(err => console.error(err));
+      .then(res => setBookings(Array.isArray(res.data) ? res.data : (res.data?.bookings ?? [])))
+      .catch(err => {
+        console.error(err);
+        setBookings([]);
+      })
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
@@ -19,7 +26,9 @@ const BookingHistory = () => {
       <h1 className="text-4xl font-extrabold text-gray-900 mb-10 tracking-tight">My Tickets</h1>
 
       <div className="flex flex-col gap-6">
-        {bookings.length === 0 ? (
+        {loading ? (
+          <SkeletonTicketList items={3} />
+        ) : bookings.length === 0 ? (
           <div className="bg-white p-12 text-center rounded-3xl border border-gray-100 shadow-sm text-gray-500 font-medium">
             You haven't booked any tickets yet.
           </div>

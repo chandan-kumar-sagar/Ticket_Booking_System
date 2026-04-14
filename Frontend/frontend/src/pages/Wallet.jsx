@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react';
 import API from '../api/api';
+import { Skeleton, SkeletonTable } from '../components/Skeleton';
 
 const Wallet = () => {
   const [history, setHistory] = useState([]);
   const [balance, setBalance] = useState(0);
   const [amount, setAmount] = useState('');
+  const [loading, setLoading] = useState(true);
 
   const fetchHistory = async () => {
     try {
+      setLoading(true);
       const res = await API.get('/api/v1/user/data/wallet/history');
       const transactions = Array.isArray(res.data) ? res.data : [];
       setHistory(transactions);
@@ -19,6 +22,10 @@ const Wallet = () => {
       }
     } catch (err) {
       console.error(err);
+      setHistory([]);
+      setBalance(0);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -46,7 +53,13 @@ const Wallet = () => {
       <div className="bg-gradient-to-br from-violet-600 to-indigo-700 rounded-3xl p-8 mb-10 text-white shadow-xl shadow-violet-500/20 flex flex-col md:flex-row justify-between items-center gap-6">
         <div>
           <p className="text-violet-200 font-medium mb-1">Current Balance</p>
-          <h1 className="text-5xl font-extrabold tracking-tight">₹{balance}</h1>
+          {loading ? (
+            <div className="mt-2">
+              <Skeleton className="h-12 w-44 rounded-2xl bg-white/20" />
+            </div>
+          ) : (
+            <h1 className="text-5xl font-extrabold tracking-tight">₹{balance}</h1>
+          )}
         </div>
         
         <form onSubmit={handleAddMoney} className="flex flex-col sm:flex-row bg-white/10 backdrop-blur-md p-2 rounded-2xl border border-white/20 w-full md:w-auto gap-2">
@@ -67,7 +80,11 @@ const Wallet = () => {
 
       <h2 className="text-2xl font-bold text-gray-900 mb-6 px-2">Transaction History</h2>
       <div className="bg-white rounded-3xl shadow-md border border-gray-100 overflow-hidden">
-        {history.length === 0 ? (
+        {loading ? (
+          <div className="p-6">
+            <SkeletonTable rows={6} cols={4} />
+          </div>
+        ) : history.length === 0 ? (
           <div className="p-12 text-center text-gray-500 font-medium">
             You don't have any wallet transactions yet.
           </div>

@@ -1,9 +1,13 @@
 import React from "react";
+import { SkeletonSeatGrid } from "./Skeleton";
 
-const SeatGrid = ({ seats, selectedSeats, onSelectSeat }) => {
+const SeatGrid = ({ seats, selectedSeats, onSelectSeat, loading = false }) => {
   const safeSeats = Array.isArray(seats) ? seats : [];
   const currentUserId = typeof window !== "undefined" ? localStorage.getItem("userId") : null;
-  // If seats are loading or missing
+  if (loading) {
+    return <SkeletonSeatGrid />;
+  }
+  // If seats are missing
   if (safeSeats.length === 0) {
     return (
       <div className="flex items-center justify-center p-12 bg-gray-50 rounded-3xl border border-dashed border-gray-300">

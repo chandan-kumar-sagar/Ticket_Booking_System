@@ -18,7 +18,7 @@ function App() {
   return (
     <BrowserRouter>
       {/* Global wrapper with a beautiful rich mesh gradient background */}
-      <div className="min-h-screen bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-fuchsia-100 via-indigo-50 to-cyan-100 text-gray-800 selection:bg-violet-300 selection:text-violet-900 relative overflow-x-hidden">
+      <div className="min-h-screen flex flex-col bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-fuchsia-100 via-indigo-50 to-cyan-100 text-gray-800 selection:bg-violet-300 selection:text-violet-900 relative overflow-x-hidden">
         
         {/* Soft animated background blobs for extreme premium feel */}
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-gradient-to-br from-violet-400/30 to-fuchsia-400/30 blur-[100px] mix-blend-multiply pointer-events-none"></div>
@@ -27,7 +27,7 @@ function App() {
         {/* Global Navigation Bar */}
         <Navbar />
         
-        <main className="pb-16 px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+        <main className="flex-1 px-4 sm:px-6 lg:px-8 py-8 sm:py-10 relative z-10 w-full">
           <Routes>
             <Route path="/" element={<Login />} />
             <Route path="/signup" element={<Signup />} />

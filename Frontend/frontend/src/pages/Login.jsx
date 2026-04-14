@@ -42,7 +42,7 @@ const Login = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[80vh] py-8">
+    <div className="flex flex-col items-center justify-center py-10 sm:py-14">
       <div className="p-6 sm:p-8 md:p-10 bg-white/80 backdrop-blur-2xl shadow-2xl shadow-indigo-500/10 border border-white/70 rounded-3xl w-full max-w-md relative overflow-hidden">
         
         <div className="absolute top-[-50px] right-[-50px] w-40 h-40 bg-indigo-400 rounded-full mix-blend-multiply filter blur-[50px] opacity-40 pointer-events-none"></div>

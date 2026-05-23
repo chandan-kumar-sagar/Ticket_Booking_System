@@ -18,18 +18,14 @@ const Dashboard = () => {
         const next = Array.isArray(res.data) ? res.data : res.data?.events;
         setEvents(Array.isArray(next) ? next : []);
       })
-      .catch((err) => {
-        console.error(err);
-        setEvents([]);
-      })
+      .catch((err) => { console.error(err); setEvents([]); })
       .finally(() => setLoading(false));
   }, []);
 
   const totalEvents = events.length;
-  const avgPrice =
-    totalEvents > 0
-      ? Math.round(events.reduce((sum, e) => sum + (Number(e.price) || 0), 0) / totalEvents)
-      : 0;
+  const avgPrice = totalEvents > 0
+    ? Math.round(events.reduce((sum, e) => sum + (Number(e.price) || 0), 0) / totalEvents)
+    : 0;
   const totalCapacity = events.reduce((sum, e) => sum + (Number(e.totalSeats) || 0), 0);
 
   const topEvents = [...events]
@@ -42,136 +38,156 @@ const Dashboard = () => {
     .slice(0, 12)
     .map(e => Number(e.price) || 0);
 
+  const statCards = [
+    { label: 'Events Live', value: totalEvents, icon: '🎪', color: 'from-violet-500 to-fuchsia-500' },
+    { label: 'Avg Ticket Price', value: `₹${avgPrice}`, icon: '💳', color: 'from-cyan-500 to-blue-500' },
+    { label: 'Total Capacity', value: totalCapacity.toLocaleString(), icon: '🪑', color: 'from-amber-500 to-orange-500' },
+    { label: 'Price Spread', value: null, icon: '📈', color: 'from-emerald-500 to-teal-500', chart: true },
+  ];
+
   return (
-    <div className="max-w-7xl mx-auto py-6 sm:py-8">
-      <div className="flex flex-col gap-6 sm:gap-8 mb-8">
-        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
-          <div className="min-w-0">
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
-              User Dashboard
-            </h1>
-            <p className="mt-2 text-gray-500 font-semibold">
-              Browse events, reserve seats, and manage your bookings.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => navigate('/wallet')}
-              className="rounded-xl px-4 py-2 font-extrabold bg-white/70 hover:bg-white border border-white/60 text-gray-900 shadow-sm transition"
-            >
-              Wallet
-            </button>
-            <button
-              onClick={() => navigate('/history')}
-              className="rounded-xl px-4 py-2 font-extrabold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition"
-            >
-              My Tickets
-            </button>
-          </div>
+    <div className="max-w-7xl mx-auto py-6 sm:py-10">
+
+      {/* Header */}
+      <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-8">
+        <div>
+          <p className="text-xs font-extrabold tracking-widest text-violet-400 uppercase mb-2">
+            ✦ User Dashboard
+          </p>
+          <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+            Browse{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-fuchsia-400 to-cyan-400">
+              Events
+            </span>
+          </h1>
+          <p className="mt-2 text-white/40 font-semibold text-sm">
+            Reserve seats, manage your bookings, and top-up your wallet.
+          </p>
         </div>
-
-        {loading ? (
-          <SkeletonStatsGrid items={4} />
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white/70 backdrop-blur rounded-3xl border border-white/60 p-5 shadow-sm">
-              <p className="text-xs font-extrabold tracking-widest text-gray-400 uppercase">Events live</p>
-              <p className="mt-2 text-3xl font-black text-gray-900">{totalEvents}</p>
-            </div>
-            <div className="bg-white/70 backdrop-blur rounded-3xl border border-white/60 p-5 shadow-sm">
-              <p className="text-xs font-extrabold tracking-widest text-gray-400 uppercase">Avg ticket price</p>
-              <p className="mt-2 text-3xl font-black text-gray-900">₹{avgPrice}</p>
-            </div>
-            <div className="bg-white/70 backdrop-blur rounded-3xl border border-white/60 p-5 shadow-sm">
-              <p className="text-xs font-extrabold tracking-widest text-gray-400 uppercase">Total capacity</p>
-              <p className="mt-2 text-3xl font-black text-gray-900">{totalCapacity}</p>
-            </div>
-            <div className="bg-white/70 backdrop-blur rounded-3xl border border-white/60 p-5 shadow-sm">
-              <p className="text-xs font-extrabold tracking-widest text-gray-400 uppercase">Price spread</p>
-              <div className="mt-2">
-                <Sparkline values={priceSeries} />
-              </div>
-            </div>
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <div className="lg:col-span-2 bg-white/70 backdrop-blur rounded-3xl border border-white/60 p-5 shadow-sm">
-            <div className="flex items-center justify-between gap-4">
-              <div className="min-w-0">
-                <p className="text-sm font-extrabold text-gray-900">Top events by capacity</p>
-                <p className="text-xs text-gray-500 font-semibold">Most seats available right now</p>
-              </div>
-              <div className="text-xs font-bold text-gray-500 whitespace-nowrap">Seats</div>
-            </div>
-            <div className="mt-4">
-              <MiniBarChart values={capValues} labels={capLabels} />
-            </div>
-          </div>
-          <div className="bg-gradient-to-br from-gray-900 to-indigo-900 rounded-3xl p-6 shadow-2xl shadow-indigo-900/20 text-white border border-white/10">
-            <p className="text-sm font-extrabold">Quick tips</p>
-            <ul className="mt-3 space-y-2 text-indigo-100 text-sm font-semibold">
-              <li>- Seats can expire if not booked in time.</li>
-              <li>- Keep your wallet topped up for instant checkout.</li>
-              <li>- Refund requests are available from My Tickets.</li>
-            </ul>
-          </div>
+        <div className="flex flex-wrap gap-3">
+          <button
+            id="dash-wallet-btn"
+            onClick={() => navigate('/wallet')}
+            className="rounded-2xl px-5 py-2.5 font-extrabold text-white/80 bg-white/8 border border-white/12 hover:bg-white/15 hover:text-white backdrop-blur transition-all duration-200"
+          >
+            💰 Wallet
+          </button>
+          <button
+            id="dash-tickets-btn"
+            onClick={() => navigate('/history')}
+            className="rounded-2xl px-5 py-2.5 font-extrabold text-white bg-gradient-to-r from-violet-600 to-fuchsia-600 shadow-lg shadow-violet-500/30 hover:shadow-violet-500/50 hover:-translate-y-0.5 transition-all duration-200"
+          >
+            🎟️ My Tickets
+          </button>
         </div>
       </div>
 
-      <div className="mt-14 mb-12 flex items-center justify-center gap-4">
-        <div className="hidden sm:block h-px w-20 bg-gradient-to-r from-transparent via-violet-400 to-transparent" />
-        <h2 className="text-3xl sm:text-4xl font-black text-center tracking-tight">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-600 via-fuchsia-600 to-indigo-600 drop-shadow-sm">
+      {/* Stat Cards */}
+      {loading ? (
+        <SkeletonStatsGrid items={4} />
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          {statCards.map((card, i) => (
+            <div
+              key={i}
+              className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-5 shadow-lg group hover:border-white/20 transition-all duration-300"
+            >
+              <div className={`absolute -top-6 -right-6 w-20 h-20 rounded-full bg-gradient-to-br ${card.color} opacity-20 blur-2xl group-hover:opacity-30 transition-opacity`} />
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs font-extrabold tracking-widest text-white/40 uppercase">{card.label}</p>
+                <span className="text-xl">{card.icon}</span>
+              </div>
+              {card.chart ? (
+                <div className="mt-1"><Sparkline values={priceSeries} /></div>
+              ) : (
+                <p className="text-3xl font-black text-white">{card.value}</p>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Charts Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-10">
+        <div className="lg:col-span-2 relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-6 shadow-lg">
+          <p className="text-sm font-black text-white mb-1">Top Events by Capacity</p>
+          <p className="text-xs text-white/40 font-semibold mb-4">Most seats available right now</p>
+          <MiniBarChart values={capValues} labels={capLabels} />
+        </div>
+        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-violet-900/60 to-indigo-900/60 backdrop-blur-xl p-6 shadow-xl">
+          <div className="absolute -top-8 -right-8 w-32 h-32 bg-violet-500/20 rounded-full blur-3xl pointer-events-none" />
+          <p className="text-sm font-black text-white mb-3">✨ Quick Tips</p>
+          <ul className="space-y-3 text-indigo-200 text-sm font-semibold">
+            <li className="flex gap-2"><span>⏰</span> Seats can expire if not booked in time.</li>
+            <li className="flex gap-2"><span>💳</span> Keep your wallet topped up for instant checkout.</li>
+            <li className="flex gap-2"><span>↩️</span> Refund requests are available from My Tickets.</li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Events Section Title */}
+      <div className="flex items-center justify-center gap-4 mb-10">
+        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-violet-500/50 to-transparent" />
+        <h2 className="text-2xl sm:text-3xl font-black text-center tracking-tight whitespace-nowrap">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-fuchsia-400 to-cyan-400">
             {t('dashboard.discover')}
           </span>
         </h2>
-        <div className="hidden sm:block h-px w-20 bg-gradient-to-r from-transparent via-indigo-400 to-transparent" />
+        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent" />
       </div>
+
+      {/* Event Cards */}
       {loading ? (
         <SkeletonCardGrid items={6} />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {events.map((evt) => (
-            <div 
-              key={evt._id} 
+            <div
+              key={evt._id}
+              id={`event-card-${evt._id}`}
               onClick={() => navigate(`/seats/${evt._id}`)}
-              className="group flex flex-col justify-between p-7 bg-white rounded-3xl shadow-md shadow-gray-200/50 border border-gray-100 hover:shadow-2xl hover:shadow-violet-500/10 transition-all cursor-pointer hover:-translate-y-1 relative overflow-hidden"
+              className="group relative flex flex-col justify-between p-6 rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl hover:border-violet-400/40 hover:bg-white/10 hover:-translate-y-1 hover:shadow-[0_20px_60px_rgba(139,92,246,0.2)] transition-all duration-300 cursor-pointer overflow-hidden"
             >
-              {/* Decorative background */}
-              <div className="absolute -right-12 -top-12 w-32 h-32 bg-violet-100 rounded-full blur-2xl opacity-60 group-hover:bg-violet-200 transition-colors pointer-events-none"></div>
+              {/* Decorative gradient */}
+              <div className="absolute -right-10 -top-10 w-36 h-36 bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 rounded-full blur-2xl group-hover:from-violet-500/30 group-hover:to-fuchsia-500/30 transition-all duration-300 pointer-events-none" />
+              
+              {/* Watermark ticket icon */}
               <img
                 src="/brand-ticket.png"
                 alt=""
                 aria-hidden="true"
-                className="pointer-events-none absolute -right-6 -bottom-8 w-56 opacity-[0.08] rotate-[-12deg] select-none"
+                className="pointer-events-none absolute -right-4 -bottom-6 w-48 opacity-[0.04] rotate-[-12deg] select-none group-hover:opacity-[0.07] transition-opacity"
               />
-              
+
               <div className="relative z-10">
-                <h3 className="text-2xl font-black text-gray-900 mb-4 tracking-tight leading-snug">
+                {/* Event name */}
+                <h3 className="text-xl font-black text-white mb-5 tracking-tight leading-snug group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-violet-300 group-hover:to-fuchsia-300 transition-all duration-300">
                   {evt.name}
                 </h3>
 
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="rounded-2xl bg-gray-50/80 border border-gray-100 px-4 py-3">
-                    <p className="text-[11px] font-extrabold uppercase tracking-widest text-gray-400">Entry price</p>
-                    <p className="mt-1 text-lg font-black text-violet-700">₹{evt.price}</p>
+                  <div className="rounded-2xl bg-white/5 border border-white/10 px-4 py-3">
+                    <p className="text-[10px] font-extrabold uppercase tracking-widest text-white/40">Entry Price</p>
+                    <p className="mt-1 text-lg font-black text-violet-300">₹{evt.price}</p>
                   </div>
-                  <div className="rounded-2xl bg-gray-50/80 border border-gray-100 px-4 py-3">
-                    <p className="text-[11px] font-extrabold uppercase tracking-widest text-gray-400">Capacity</p>
-                    <p className="mt-1 text-lg font-black text-gray-900">{evt.totalSeats} <span className="text-gray-500 font-bold text-sm">seats</span></p>
+                  <div className="rounded-2xl bg-white/5 border border-white/10 px-4 py-3">
+                    <p className="text-[10px] font-extrabold uppercase tracking-widest text-white/40">Capacity</p>
+                    <p className="mt-1 text-lg font-black text-white">{evt.totalSeats} <span className="text-white/40 font-bold text-sm">seats</span></p>
                   </div>
                 </div>
               </div>
-              
-              <button className="relative z-10 mt-8 w-full bg-violet-50 text-violet-700 font-bold py-3.5 rounded-xl group-hover:bg-violet-600 group-hover:text-white transition-colors duration-300">
-                Select Seats
+
+              <button className="relative z-10 mt-6 w-full py-3.5 rounded-xl font-extrabold text-sm text-violet-300 border border-violet-500/30 bg-violet-500/10 group-hover:bg-gradient-to-r group-hover:from-violet-600 group-hover:to-fuchsia-600 group-hover:text-white group-hover:border-transparent group-hover:shadow-lg group-hover:shadow-violet-500/30 transition-all duration-300">
+                Select Seats →
               </button>
             </div>
           ))}
+
           {events.length === 0 && (
-            <div className="col-span-full py-16 text-center">
-              <p className="text-xl text-gray-400 font-medium">No extraordinary events currently available.</p>
+            <div className="col-span-full py-20 text-center">
+              <div className="text-5xl mb-4">🎭</div>
+              <p className="text-xl text-white/30 font-semibold">No events available right now.</p>
+              <p className="text-sm text-white/20 font-medium mt-2">Check back soon for upcoming events!</p>
             </div>
           )}
         </div>

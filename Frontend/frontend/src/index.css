@@ -23,6 +23,15 @@
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
+  /* Custom background gradient stops for premium mesh background */
+  --gradient-1: rgba(232, 121, 249, 0.22); /* Fuchsia */
+  --gradient-2: rgba(129, 140, 248, 0.18); /* Indigo */
+  --gradient-3: rgba(103, 232, 249, 0.22); /* Cyan */
+  --gradient-bg: #f8fafc;
+
+  /* Celestial night sky background variables */
+  --space-bg: linear-gradient(180deg, #030312 0%, #080726 40%, #120d3a 100%);
+
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;
   color-scheme: light dark;
@@ -51,10 +60,300 @@
     --social-bg: rgba(47, 48, 58, 0.5);
     --shadow:
       rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+
+    /* Custom dark-theme gradient stops for premium mesh background */
+    --gradient-1: rgba(162, 28, 175, 0.12); /* Fuchsia dark */
+    --gradient-2: rgba(49, 46, 129, 0.22);  /* Indigo dark */
+    --gradient-3: rgba(8, 145, 178, 0.12);  /* Cyan dark */
+    --gradient-bg: #09090b;                 /* Deep charcoal/black */
+
+    /* Celestial night sky background variables */
+    --space-bg: linear-gradient(180deg, #010103 0%, #03030d 50%, #060614 100%);
   }
 
   #social .button-icon {
     filter: invert(1) brightness(2);
+  }
+}
+
+/* Premium Mesh Gradient Class */
+.premium-mesh-bg {
+  background-color: var(--gradient-bg);
+  background-image: 
+    radial-gradient(at 100% 0%, var(--gradient-1) 0px, transparent 55%),
+    radial-gradient(at 0% 100%, var(--gradient-2) 0px, transparent 55%),
+    radial-gradient(at 50% 50%, var(--gradient-3) 0px, transparent 65%);
+  background-attachment: fixed;
+  background-size: cover;
+}
+
+/* Celestial Starry Night Sky Background Class */
+.night-sky-bg {
+  background: var(--space-bg);
+  background-attachment: fixed;
+  background-size: cover;
+}
+
+/* High-performance floating cosmic nebula animations with continuous hue-rotation */
+@keyframes float-nebula-1 {
+  0% { transform: translate(0px, 0px) scale(1) rotate(0deg); filter: hue-rotate(0deg); }
+  50% { transform: translate(50px, -70px) scale(1.2) rotate(180deg); filter: hue-rotate(180deg); }
+  100% { transform: translate(0px, 0px) scale(1) rotate(360deg); filter: hue-rotate(360deg); }
+}
+@keyframes float-nebula-2 {
+  0% { transform: translate(0px, 0px) scale(1.15) rotate(0deg); filter: hue-rotate(90deg); }
+  50% { transform: translate(-70px, 50px) scale(0.9) rotate(-180deg); filter: hue-rotate(270deg); }
+  100% { transform: translate(0px, 0px) scale(1.15) rotate(-360deg); filter: hue-rotate(450deg); }
+}
+@keyframes float-nebula-3 {
+  0% { transform: translate(0px, 0px) scale(0.9) rotate(0deg); filter: hue-rotate(180deg); }
+  50% { transform: translate(-50px, -50px) scale(1.1) rotate(180deg); filter: hue-rotate(0deg); }
+  100% { transform: translate(0px, 0px) scale(0.9) rotate(360deg); filter: hue-rotate(180deg); }
+}
+
+.animate-float-1 {
+  animation: float-nebula-1 25s infinite ease-in-out;
+}
+.animate-float-2 {
+  animation: float-nebula-2 30s infinite ease-in-out;
+}
+.animate-float-3 {
+  animation: float-nebula-3 20s infinite ease-in-out;
+}
+
+/* Supercharged Starry Night Twinkling Star Animations */
+@keyframes twinkle-fast {
+  0%, 100% { opacity: 0.2; transform: scale(0.6); }
+  50% { opacity: 1; transform: scale(1.5); filter: drop-shadow(0 0 5px #fff) drop-shadow(0 0 10px rgba(167, 139, 250, 0.5)); }
+}
+@keyframes twinkle-medium {
+  0%, 100% { opacity: 0.35; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.25); filter: drop-shadow(0 0 2px #fff); }
+}
+@keyframes twinkle-slow {
+  0%, 100% { opacity: 0.15; transform: scale(0.9); }
+  50% { opacity: 0.85; transform: scale(1.1); }
+}
+
+.animate-twinkle-fast {
+  animation: twinkle-fast 1.8s infinite ease-in-out;
+}
+.animate-twinkle-medium {
+  animation: twinkle-medium 3.2s infinite ease-in-out;
+}
+.animate-twinkle-slow {
+  animation: twinkle-slow 5s infinite ease-in-out;
+}
+
+/* Rapid Shooting Stars Gliding down-left */
+@keyframes shoot-star-fast {
+  0% {
+    transform: translate(0, 0) rotate(-40deg) scaleX(0);
+    opacity: 0;
+  }
+  2% {
+    transform: translate(-60px, 50px) rotate(-40deg) scaleX(1.6);
+    opacity: 1;
+  }
+  8% {
+    transform: translate(-250px, 210px) rotate(-40deg) scaleX(0);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-250px, 210px) rotate(-40deg) scaleX(0);
+    opacity: 0;
+  }
+}
+
+.shooting-star {
+  position: absolute;
+  width: 150px;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 100%);
+  transform-origin: left center;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.shooting-star-1 {
+  top: 8%;
+  right: 12%;
+  animation: shoot-star-fast 5s infinite linear;
+}
+
+.shooting-star-2 {
+  top: 25%;
+  right: 40%;
+  animation: shoot-star-fast 7s infinite linear;
+  animation-delay: 1.5s;
+}
+
+.shooting-star-3 {
+  top: 45%;
+  right: 20%;
+  animation: shoot-star-fast 9s infinite linear;
+  animation-delay: 3.5s;
+}
+
+.shooting-star-4 {
+  top: 15%;
+  right: 65%;
+  animation: shoot-star-fast 6s infinite linear;
+  animation-delay: 1s;
+}
+
+.shooting-star-5 {
+  top: 35%;
+  right: 80%;
+  animation: shoot-star-fast 8.5s infinite linear;
+  animation-delay: 4.8s;
+}
+
+/* Undulating glowing Aurora Borealis curtains animation */
+@keyframes aurora-wave {
+  0%, 100% {
+    transform: skewX(-15deg) rotate(1deg) scaleY(1);
+    filter: hue-rotate(0deg) blur(50px);
+    opacity: 0.7;
+  }
+  50% {
+    transform: skewX(-8deg) rotate(-1deg) scaleY(1.2);
+    filter: hue-rotate(75deg) blur(65px);
+    opacity: 0.95;
+  }
+}
+
+.aurora-ribbon {
+  position: absolute;
+  width: 150%;
+  height: 38%;
+  left: -25%;
+  top: -8%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(34, 197, 94, 0.1) 15%,     /* Green */
+    rgba(20, 184, 166, 0.12) 35%,    /* Teal */
+    rgba(99, 102, 241, 0.1) 55%,     /* Indigo */
+    rgba(168, 85, 247, 0.08) 75%,    /* Purple */
+    rgba(236, 72, 153, 0.06) 90%,    /* Pink */
+    transparent 100%
+  );
+  filter: blur(55px);
+  transform-origin: top center;
+  animation: aurora-wave 14s infinite ease-in-out;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.aurora-ribbon-2 {
+  top: -4%;
+  animation: aurora-wave 19s infinite ease-in-out;
+  animation-delay: -5s;
+  opacity: 0.75;
+}
+
+/* Slow pulse glow animation for card halos */
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 0.9; transform: scale(1.04); }
+}
+.animate-pulse-slow {
+  animation: pulse-slow 4s infinite ease-in-out;
+}
+
+/* Firefly / sparkle float animation */
+@keyframes firefly {
+  0% { transform: translate(0, 0) scale(0.8); opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 0.6; }
+  100% { transform: translate(var(--fx, 40px), var(--fy, -60px)) scale(1.2); opacity: 0; }
+}
+
+/* Dark glass input styles for night sky pages */
+.glass-input {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: white;
+  border-radius: 1rem;
+  padding: 1rem 1.25rem;
+  outline: none;
+  font-weight: 600;
+  transition: all 0.2s;
+  backdrop-filter: blur(12px);
+}
+.glass-input::placeholder { color: rgba(255,255,255,0.3); }
+.glass-input:focus {
+  border-color: rgba(139,92,246,0.5);
+  background: rgba(255,255,255,0.10);
+  box-shadow: 0 0 0 3px rgba(139,92,246,0.15);
+}
+
+/* Dark glass card base */
+.glass-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(20px);
+  border-radius: 1.5rem;
+}
+.glass-card:hover {
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(139,92,246,0.3);
+}
+
+/* Scrollbar styling for dark theme */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); }
+::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.4); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(139,92,246,0.7); }
+
+/* Ethereal glowing moon animations */
+@keyframes moon-glow {
+  0%, 100% {
+    box-shadow: 0 0 50px rgba(255, 255, 255, 0.22);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 75px rgba(255, 255, 255, 0.38);
+    transform: scale(1.03);
+  }
+}
+.animate-moon-glow {
+  animation: moon-glow 8s infinite ease-in-out;
+}
+
+/* Responsive adjustments for mobile and tablets */
+@media (max-width: 1024px) {
+  .aurora-ribbon {
+    height: 30%;
+    filter: blur(45px);
+  }
+  .shooting-star {
+    width: 110px; /* Shorter streaks for tablets */
+  }
+}
+
+@media (max-width: 768px) {
+  /* Performance optimization: hide 33% of the twinkling stars on mobile */
+  .absolute.rounded-full.animate-twinkle-fast:nth-child(3n),
+  .absolute.rounded-full.animate-twinkle-medium:nth-child(3n),
+  .absolute.rounded-full.animate-twinkle-slow:nth-child(3n) {
+    display: none !important;
+  }
+
+  .aurora-ribbon {
+    height: 24%;
+    filter: blur(35px);
+  }
+
+  /* Prevent cluttering on small screens: hide shooting stars 4 and 5 */
+  .shooting-star-4,
+  .shooting-star-5 {
+    display: none !important;
+  }
+
+  .shooting-star {
+    width: 85px; /* Much shorter streaks for mobile */
   }
 }
 

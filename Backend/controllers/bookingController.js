@@ -14,21 +14,20 @@ exports.bookSeats = async (req, res) => {
     const userId = req.user.id;
     const { eventId, seats } = req.body;
 
-    // ✅ Validate input
+ 
     if (!eventId || !seats || seats.length === 0) {
       throw new Error("EventId and seats are required");
     }
 
-    // ✅ Get event
+    
     const event = await Event.findById(eventId).session(session);
     if (!event) {
       throw new Error("Event not found");
     }
 
-    // ✅ Calculate amount
+   
     const totalAmount = event.price * seats.length;
 
-    // ✅ Validate seats are AVAILABLE at booking time
     const seatDocs = await Seat.find({
       _id: { $in: seats },
       eventId,
@@ -39,7 +38,7 @@ exports.bookSeats = async (req, res) => {
       throw new Error("Some seats are already reserved or booked");
     }
 
-    // ✅ Deduct wallet (atomic)
+  
     const wallet = await Wallet.findOneAndUpdate(
       {
         userId,
@@ -58,7 +57,6 @@ exports.bookSeats = async (req, res) => {
       throw new Error("Insufficient balance");
     }
 
-    // ✅ Create transaction
     await Transaction.create([{
       userId,
       type: "debit",
@@ -66,7 +64,6 @@ exports.bookSeats = async (req, res) => {
       balanceAfter: wallet.balance
     }], { session });
 
-    // ✅ Update seats → BOOKED (atomically)
     await Seat.updateMany(
       {
         _id: { $in: seats },
@@ -81,7 +78,6 @@ exports.bookSeats = async (req, res) => {
       { session }
     );
 
-    // ✅ Create booking
     const booking = await Booking.create([{
       userId,
       eventId,
@@ -227,24 +223,20 @@ exports.refundBooking = async (req, res) => {
       throw new Error("Invalid booking");
     }
 
-    // Cancel booking
     booking.status = "CANCELLED";
     await booking.save();
 
-    // Release seats
     await Seat.updateMany(
       { _id: { $in: booking.seats } },
       { status: "AVAILABLE" },
       { session }
     );
 
-    // Refund wallet
     const wallet = await Wallet.findOne({ userId: booking.userId }).session(session);
 
     wallet.balance += booking.totalAmount;
     await wallet.save();
 
-    // Add transaction
     await Transaction.create([{
       userId: booking.userId,
       type: "credit",
@@ -262,7 +254,6 @@ exports.refundBooking = async (req, res) => {
   }
 };
 
-// Admin: users who booked admin's events
 exports.getUsersForAdminEvents = async (req, res) => {
   try {
     const adminId = req.user.id;

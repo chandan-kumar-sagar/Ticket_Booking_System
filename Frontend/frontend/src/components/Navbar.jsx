@@ -42,13 +42,13 @@ const Navbar = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/20 bg-white/70 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 w-full border-b border-white/20 dark:border-white/10 bg-white/70 dark:bg-zinc-950/70 backdrop-blur-xl transition-all duration-300">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Desktop / laptop */}
         <div className="hidden lg:flex items-center justify-between py-3">
           {/* Brand */}
           <Link to={brandTo} className="inline-flex items-center gap-3 text-2xl font-black tracking-tight">
-            <span className="inline-flex items-center justify-center rounded-2xl bg-white/60 backdrop-blur border border-white/70 shadow-sm p-1.5">
+            <span className="inline-flex items-center justify-center rounded-2xl bg-white/60 dark:bg-zinc-900/60 backdrop-blur border border-white/70 dark:border-zinc-800 shadow-sm p-1.5">
               <img
                 src="/brand-ticket.png"
                 alt="TicketHub"
@@ -66,18 +66,18 @@ const Navbar = () => {
             <div className="flex items-center gap-10 text-base">
               {isAuthenticated && role === 'admin' && (
                 <>
-                  <Link className="font-extrabold text-gray-700 hover:text-gray-900" to="/admin">{t('nav.adminPanel')}</Link>
-                  <Link className="font-extrabold text-gray-700 hover:text-gray-900" to="/admin/bookings">{t('nav.globalBookings')}</Link>
-                  <Link className="font-extrabold text-gray-700 hover:text-gray-900" to="/admin/transactions">{t('nav.transactions')}</Link>
-                  <Link className="font-extrabold text-gray-700 hover:text-gray-900" to="/admin/refunds">{t('nav.refundRequests')}</Link>
+                  <Link className="font-extrabold text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white" to="/admin">{t('nav.adminPanel')}</Link>
+                  <Link className="font-extrabold text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white" to="/admin/bookings">{t('nav.globalBookings')}</Link>
+                  <Link className="font-extrabold text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white" to="/admin/transactions">{t('nav.transactions')}</Link>
+                  <Link className="font-extrabold text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white" to="/admin/refunds">{t('nav.refundRequests')}</Link>
                 </>
               )}
 
               {isAuthenticated && role === 'user' && (
                 <>
-                  <Link className="font-extrabold text-gray-700 hover:text-gray-900" to="/dashboard">{t('nav.userDashboard')}</Link>
-                  <Link className="font-extrabold text-gray-700 hover:text-gray-900" to="/history">{t('nav.myBookedTickets')}</Link>
-                  <Link className="font-extrabold text-gray-700 hover:text-gray-900" to="/wallet">{t('nav.myWallet')}</Link>
+                  <Link className="font-extrabold text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white" to="/dashboard">{t('nav.userDashboard')}</Link>
+                  <Link className="font-extrabold text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white" to="/history">{t('nav.myBookedTickets')}</Link>
+                  <Link className="font-extrabold text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white" to="/wallet">{t('nav.myWallet')}</Link>
                 </>
               )}
             </div>
@@ -89,7 +89,7 @@ const Navbar = () => {
               <select
                 value={currentLang}
                 onChange={(e) => setLang(e.target.value)}
-                className="rounded-xl border border-white/60 bg-white/60 px-3 py-2 text-sm font-extrabold text-gray-800 shadow-sm"
+                className="rounded-xl border border-white/60 dark:border-zinc-800 bg-white/60 dark:bg-zinc-900/60 px-3 py-2 text-sm font-extrabold text-gray-800 dark:text-gray-200 shadow-sm outline-none"
                 aria-label={t('nav.language')}
               >
                 {langOptions.map((o) => (
@@ -100,7 +100,7 @@ const Navbar = () => {
 
             {!isAuthenticated && (
               <>
-                <Link to="/" className="rounded-xl px-4 py-2 font-semibold text-gray-800 hover:bg-white/60 transition">
+                <Link to="/" className="rounded-xl px-4 py-2 font-semibold text-gray-800 dark:text-gray-200 hover:bg-white/60 dark:hover:bg-zinc-850/60 transition">
                   {t('nav.login')}
                 </Link>
                 <Link to="/signup" className="rounded-xl px-4 py-2 font-extrabold text-white bg-indigo-600 hover:bg-indigo-700 transition shadow-sm">
@@ -121,7 +121,7 @@ const Navbar = () => {
         <div className="lg:hidden py-3">
           <div className="flex items-center justify-between gap-3">
             <Link onClick={closeMobile} to={brandTo} className="inline-flex items-center gap-2 text-xl font-black tracking-tight">
-              <span className="inline-flex items-center justify-center rounded-2xl bg-white/60 backdrop-blur border border-white/70 shadow-sm p-1.5">
+              <span className="inline-flex items-center justify-center rounded-2xl bg-white/60 dark:bg-zinc-900/60 backdrop-blur border border-white/70 dark:border-zinc-800 shadow-sm p-1.5">
                 <img
                   src="/brand-ticket.png"
                   alt="TicketHub"
@@ -137,7 +137,7 @@ const Navbar = () => {
             <button
               type="button"
               onClick={() => setMobileOpen(v => !v)}
-              className="rounded-2xl border border-white/60 bg-white/60 px-3 py-2 font-extrabold text-gray-800 shadow-sm"
+              className="rounded-2xl border border-white/60 dark:border-zinc-800 bg-white/60 dark:bg-zinc-900/60 px-3 py-2 font-extrabold text-gray-800 dark:text-gray-200 shadow-sm"
               aria-label="Toggle navigation menu"
               aria-expanded={mobileOpen}
             >
@@ -148,35 +148,35 @@ const Navbar = () => {
           </div>
 
           {mobileOpen && (
-            <div className="mt-3 rounded-3xl border border-white/60 bg-white/70 backdrop-blur p-3 shadow-sm">
+            <div className="mt-3 rounded-3xl border border-white/60 dark:border-zinc-800 bg-white/70 dark:bg-zinc-900/90 backdrop-blur p-3 shadow-sm">
               <nav className="flex flex-col gap-1 text-sm">
                 {isAuthenticated && role === 'admin' && (
                   <>
-                    <Link onClick={closeMobile} className="rounded-2xl px-4 py-3 font-extrabold text-gray-800 hover:bg-white/70 transition" to="/admin">{t('nav.adminPanel')}</Link>
-                    <Link onClick={closeMobile} className="rounded-2xl px-4 py-3 font-extrabold text-gray-800 hover:bg-white/70 transition" to="/admin/bookings">{t('nav.globalBookings')}</Link>
-                    <Link onClick={closeMobile} className="rounded-2xl px-4 py-3 font-extrabold text-gray-800 hover:bg-white/70 transition" to="/admin/transactions">{t('nav.transactions')}</Link>
-                    <Link onClick={closeMobile} className="rounded-2xl px-4 py-3 font-extrabold text-gray-800 hover:bg-white/70 transition" to="/admin/refunds">{t('nav.refundRequests')}</Link>
+                    <Link onClick={closeMobile} className="rounded-2xl px-4 py-3 font-extrabold text-gray-800 dark:text-gray-200 hover:bg-white/70 dark:hover:bg-zinc-800/70 transition" to="/admin">{t('nav.adminPanel')}</Link>
+                    <Link onClick={closeMobile} className="rounded-2xl px-4 py-3 font-extrabold text-gray-800 dark:text-gray-200 hover:bg-white/70 dark:hover:bg-zinc-800/70 transition" to="/admin/bookings">{t('nav.globalBookings')}</Link>
+                    <Link onClick={closeMobile} className="rounded-2xl px-4 py-3 font-extrabold text-gray-800 dark:text-gray-200 hover:bg-white/70 dark:hover:bg-zinc-800/70 transition" to="/admin/transactions">{t('nav.transactions')}</Link>
+                    <Link onClick={closeMobile} className="rounded-2xl px-4 py-3 font-extrabold text-gray-800 dark:text-gray-200 hover:bg-white/70 dark:hover:bg-zinc-800/70 transition" to="/admin/refunds">{t('nav.refundRequests')}</Link>
                   </>
                 )}
 
                 {isAuthenticated && role === 'user' && (
                   <>
-                    <Link onClick={closeMobile} className="rounded-2xl px-4 py-3 font-extrabold text-gray-800 hover:bg-white/70 transition" to="/dashboard">{t('nav.userDashboard')}</Link>
-                    <Link onClick={closeMobile} className="rounded-2xl px-4 py-3 font-extrabold text-gray-800 hover:bg-white/70 transition" to="/history">{t('nav.myBookedTickets')}</Link>
-                    <Link onClick={closeMobile} className="rounded-2xl px-4 py-3 font-extrabold text-gray-800 hover:bg-white/70 transition" to="/wallet">{t('nav.myWallet')}</Link>
+                    <Link onClick={closeMobile} className="rounded-2xl px-4 py-3 font-extrabold text-gray-800 dark:text-gray-200 hover:bg-white/70 dark:hover:bg-zinc-800/70 transition" to="/dashboard">{t('nav.userDashboard')}</Link>
+                    <Link onClick={closeMobile} className="rounded-2xl px-4 py-3 font-extrabold text-gray-800 dark:text-gray-200 hover:bg-white/70 dark:hover:bg-zinc-800/70 transition" to="/history">{t('nav.myBookedTickets')}</Link>
+                    <Link onClick={closeMobile} className="rounded-2xl px-4 py-3 font-extrabold text-gray-800 dark:text-gray-200 hover:bg-white/70 dark:hover:bg-zinc-800/70 transition" to="/wallet">{t('nav.myWallet')}</Link>
                   </>
                 )}
               </nav>
 
-              <div className="mt-2 border-t border-white/60 pt-2 flex flex-col gap-2">
+              <div className="mt-2 border-t border-white/60 dark:border-zinc-800 pt-2 flex flex-col gap-2">
                 <div className="px-1">
-                  <label className="block text-xs font-extrabold text-gray-500 px-3 pb-2">
+                  <label className="block text-xs font-extrabold text-gray-500 dark:text-gray-400 px-3 pb-2">
                     {t('nav.language')}
                   </label>
                   <select
                     value={currentLang}
                     onChange={(e) => setLang(e.target.value)}
-                    className="w-full rounded-2xl border border-white/60 bg-white/60 px-4 py-3 font-extrabold text-gray-800 shadow-sm"
+                    className="w-full rounded-2xl border border-white/60 dark:border-zinc-800 bg-white/60 dark:bg-zinc-900/60 px-4 py-3 font-extrabold text-gray-800 dark:text-gray-200 shadow-sm outline-none"
                   >
                     {langOptions.map((o) => (
                       <option key={o.code} value={o.code}>{o.label}</option>
@@ -186,7 +186,7 @@ const Navbar = () => {
 
                 {!isAuthenticated && (
                   <>
-                    <Link onClick={closeMobile} to="/" className="rounded-2xl px-4 py-3 font-extrabold text-gray-800 hover:bg-white/70 transition">
+                    <Link onClick={closeMobile} to="/" className="rounded-2xl px-4 py-3 font-extrabold text-gray-800 dark:text-gray-200 hover:bg-white/70 dark:hover:bg-zinc-800/70 transition">
                       {t('nav.login')}
                     </Link>
                     <Link onClick={closeMobile} to="/signup" className="rounded-2xl px-4 py-3 font-extrabold text-white bg-indigo-600 hover:bg-indigo-700 transition shadow-sm">

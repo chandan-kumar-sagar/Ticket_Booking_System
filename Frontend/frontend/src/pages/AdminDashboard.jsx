@@ -13,19 +13,18 @@ const AdminDashboard = () => {
   const [price, setPrice] = useState('');
   const [totalSeats, setTotalSeats] = useState('');
   const [deletingEventId, setDeletingEventId] = useState(null);
+  const [creating, setCreating] = useState(false);
 
   const fetchEvents = async () => {
     const res = await API.get('/api/v1/Admin/data/event');
-    const nextEvents = Array.isArray(res.data) ? res.data : res.data?.events;
-    setEvents(Array.isArray(nextEvents) ? nextEvents : []);
+    const next = Array.isArray(res.data) ? res.data : res.data?.events;
+    setEvents(Array.isArray(next) ? next : []);
   };
-
   const fetchTransactions = async () => {
     const res = await API.get('/api/v1/Admin/data/transactions');
     const next = Array.isArray(res.data) ? res.data : res.data?.transactions;
     setTransactions(Array.isArray(next) ? next : []);
   };
-
   const fetchEventUsers = async () => {
     const res = await API.get('/api/v1/Admin/data/event/users');
     const next = Array.isArray(res.data) ? res.data : res.data?.events;
@@ -34,265 +33,222 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     setLoading(true);
-    Promise.all([
-      fetchEvents(),
-      fetchTransactions(),
-      fetchEventUsers()
-    ])
-      .catch(err => {
-        console.error(err);
-        setEvents([]);
-        setTransactions([]);
-        setEventUsers([]);
-      })
+    Promise.all([fetchEvents(), fetchTransactions(), fetchEventUsers()])
+      .catch(err => { console.error(err); setEvents([]); setTransactions([]); setEventUsers([]); })
       .finally(() => setLoading(false));
   }, []);
 
   const handleCreateEvent = async (e) => {
     e.preventDefault();
     try {
-      const createdEventRes = await API.post('/api/v1/Admin/data/event', { name, price: Number(price), totalSeats: Number(totalSeats) });
-      const newEventId = createdEventRes.data?.event?._id;
-      if (!newEventId) throw new Error("Event id missing from response");
-      
-      const seatsData = [];
-      for (let i = 1; i <= Number(totalSeats); i++) {
-        seatsData.push({
-          eventId: newEventId,
-          seatNumber: `S${i}`,
-          status: "AVAILABLE",
-          price: Number(price)
-        });
-      }
-      
+      setCreating(true);
+      const res = await API.post('/api/v1/Admin/data/event', { name, price: Number(price), totalSeats: Number(totalSeats) });
+      const newEventId = res.data?.event?._id;
+      if (!newEventId) throw new Error('Event id missing');
+      const seatsData = Array.from({ length: Number(totalSeats) }, (_, i) => ({
+        eventId: newEventId, seatNumber: `S${i + 1}`, status: 'AVAILABLE', price: Number(price)
+      }));
       await API.post('/api/v1/Admin/data/seats/bulk', { seats: seatsData });
-
       setName(''); setPrice(''); setTotalSeats('');
-      alert("Event Broadcasted & Seats Auto-Generated Successfully!");
-
-      await fetchEvents();
-      await fetchTransactions();
-      await fetchEventUsers();
+      alert('Event Broadcasted & Seats Auto-Generated Successfully! 🎉');
+      await Promise.all([fetchEvents(), fetchTransactions(), fetchEventUsers()]);
     } catch (err) {
       console.error(err);
-      alert("Failed to create event. Ensure you are logged in as Admin.");
+      alert('Failed to create event. Ensure you are logged in as Admin.');
+    } finally {
+      setCreating(false);
     }
   };
 
   const handleDeleteEvent = async (eventId, eventName) => {
-    const ok = window.confirm(`Delete event "${eventName || 'Event'}"?\n\nThis cannot be undone.`);
-    if (!ok) return;
-
+    if (!window.confirm(`Delete event "${eventName || 'Event'}"?\n\nThis cannot be undone.`)) return;
     try {
       setDeletingEventId(eventId);
-
-      // Prefer REST-style delete with id in path.
-      try {
-        await API.delete(`/api/v1/Admin/data/event/${eventId}`);
-      } catch (err) {
-        // Fallback for backends that accept id in request body.
-        await API.delete('/api/v1/Admin/data/event', { data: { eventId } });
-      }
-
+      try { await API.delete(`/api/v1/Admin/data/event/${eventId}`); }
+      catch { await API.delete('/api/v1/Admin/data/event', { data: { eventId } }); }
       if (openEventId === eventId) setOpenEventId(null);
-
-      await fetchEvents();
-      await fetchTransactions();
-      await fetchEventUsers();
+      await Promise.all([fetchEvents(), fetchTransactions(), fetchEventUsers()]);
       alert('Event deleted successfully.');
     } catch (err) {
       console.error(err);
-      alert('Failed to delete event. It may have active bookings, or the backend delete route is different.');
+      alert('Failed to delete event.');
     } finally {
       setDeletingEventId(null);
     }
   };
 
-  const totalEvents = events.length;
+  const totalEventsCount = events.length;
   const totalSeatsCount = events.reduce((sum, e) => sum + (Number(e.totalSeats) || 0), 0);
   const potentialRevenue = events.reduce((sum, e) => sum + (Number(e.totalSeats) || 0) * (Number(e.price) || 0), 0);
-
-  const eventPriceSeries = [...events]
-    .sort((a, b) => (Number(a.price) || 0) - (Number(b.price) || 0))
-    .slice(0, 12)
-    .map(e => Number(e.price) || 0);
-
-  const topEvents = [...events]
-    .sort((a, b) => (Number(b.totalSeats) || 0) - (Number(a.totalSeats) || 0))
-    .slice(0, 7);
-  const capValues = topEvents.map(e => Number(e.totalSeats) || 0);
-  const capLabels = topEvents.map(e => String(e.name || 'Event').slice(0, 10));
-
-  const txAmounts = [...transactions]
-    .slice(0, 12)
-    .reverse()
-    .map(t => Number(t.amount) || 0);
   const totalTx = transactions.length;
 
+  const eventPriceSeries = [...events].sort((a, b) => (Number(a.price)||0)-(Number(b.price)||0)).slice(0,12).map(e => Number(e.price)||0);
+  const topEvents = [...events].sort((a,b)=>(Number(b.totalSeats)||0)-(Number(a.totalSeats)||0)).slice(0,7);
+  const capValues = topEvents.map(e => Number(e.totalSeats)||0);
+  const capLabels = topEvents.map(e => String(e.name||'Event').slice(0,10));
+  const txAmounts = [...transactions].slice(0,12).reverse().map(t => Number(t.amount)||0);
+
+  const statCards = [
+    { label: 'Your Events', value: totalEventsCount, icon: '🎪', color: 'from-violet-500 to-fuchsia-500' },
+    { label: 'Total Seats', value: totalSeatsCount.toLocaleString(), icon: '🪑', color: 'from-cyan-500 to-blue-500' },
+    { label: 'Potential Revenue', value: `₹${potentialRevenue.toLocaleString()}`, icon: '💰', color: 'from-emerald-500 to-teal-500' },
+    { label: 'Tx Volume', value: totalTx, icon: '📊', color: 'from-amber-500 to-orange-500', chart: txAmounts },
+  ];
+
   return (
-    <div className="max-w-7xl mx-auto py-6 sm:py-8">
-      <div className="flex flex-col gap-6 sm:gap-8 mb-8">
-        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
-          <div className="min-w-0">
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
-              Admin Dashboard
-            </h1>
-            <p className="mt-2 text-gray-500 font-semibold">
-              Broadcast events, monitor transactions, and manage refunds.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <a
-              href="/admin/transactions"
-              className="rounded-xl px-4 py-2 font-extrabold bg-white/70 hover:bg-white border border-white/60 text-gray-900 shadow-sm transition"
-            >
-              Transactions
-            </a>
-            <a
-              href="/admin/refunds"
-              className="rounded-xl px-4 py-2 font-extrabold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition"
-            >
-              Refund Requests
-            </a>
-          </div>
+    <div className="max-w-7xl mx-auto py-6 sm:py-10">
+
+      {/* Header */}
+      <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-8">
+        <div>
+          <p className="text-xs font-extrabold tracking-widest text-indigo-400 uppercase mb-2">✦ Admin Dashboard</p>
+          <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+            Event{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-violet-400 to-fuchsia-400">
+              Control Panel
+            </span>
+          </h1>
+          <p className="mt-2 text-white/40 font-semibold text-sm">Broadcast events, monitor transactions, and manage refunds.</p>
         </div>
-
-        {loading ? (
-          <SkeletonStatsGrid items={4} />
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white/70 backdrop-blur rounded-3xl border border-white/60 p-5 shadow-sm">
-              <p className="text-xs font-extrabold tracking-widest text-gray-400 uppercase">Your events</p>
-              <p className="mt-2 text-3xl font-black text-gray-900">{totalEvents}</p>
-            </div>
-            <div className="bg-white/70 backdrop-blur rounded-3xl border border-white/60 p-5 shadow-sm">
-              <p className="text-xs font-extrabold tracking-widest text-gray-400 uppercase">Total seats</p>
-              <p className="mt-2 text-3xl font-black text-gray-900">{totalSeatsCount}</p>
-            </div>
-            <div className="bg-white/70 backdrop-blur rounded-3xl border border-white/60 p-5 shadow-sm">
-              <p className="text-xs font-extrabold tracking-widest text-gray-400 uppercase">Potential revenue</p>
-              <p className="mt-2 text-3xl font-black text-gray-900">₹{potentialRevenue}</p>
-            </div>
-            <div className="bg-white/70 backdrop-blur rounded-3xl border border-white/60 p-5 shadow-sm">
-              <p className="text-xs font-extrabold tracking-widest text-gray-400 uppercase">Tx volume</p>
-              <div className="mt-2 flex items-center justify-between gap-3">
-                <p className="text-3xl font-black text-gray-900">{totalTx}</p>
-                <div className="flex-1">
-                  <Sparkline values={txAmounts} stroke="#16a34a" fill="rgba(22,163,74,0.12)" />
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <div className="lg:col-span-2 bg-white/70 backdrop-blur rounded-3xl border border-white/60 p-5 shadow-sm">
-            <div className="flex items-center justify-between gap-4">
-              <div className="min-w-0">
-                <p className="text-sm font-extrabold text-gray-900">Top events by capacity</p>
-                <p className="text-xs text-gray-500 font-semibold">Seats available per event</p>
-              </div>
-              <div className="text-xs font-bold text-gray-500 whitespace-nowrap">Seats</div>
-            </div>
-            <div className="mt-4">
-              <MiniBarChart values={capValues} labels={capLabels} />
-            </div>
-          </div>
-          <div className="bg-white/70 backdrop-blur rounded-3xl border border-white/60 p-5 shadow-sm">
-            <p className="text-sm font-extrabold text-gray-900">Price distribution</p>
-            <p className="text-xs text-gray-500 font-semibold">Across your events</p>
-            <div className="mt-4">
-              <Sparkline values={eventPriceSeries} />
-            </div>
-          </div>
+        <div className="flex flex-wrap gap-3">
+          <a href="/admin/transactions" className="rounded-2xl px-5 py-2.5 font-extrabold text-white/80 bg-white/8 border border-white/12 hover:bg-white/15 hover:text-white backdrop-blur transition-all duration-200">
+            📋 Transactions
+          </a>
+          <a href="/admin/refunds" className="rounded-2xl px-5 py-2.5 font-extrabold text-white bg-gradient-to-r from-indigo-600 to-violet-600 shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:-translate-y-0.5 transition-all duration-200">
+            ↩️ Refund Requests
+          </a>
         </div>
       </div>
 
-      <div className="bg-gradient-to-tr from-gray-900 to-indigo-900 p-6 sm:p-8 rounded-[2rem] shadow-2xl shadow-indigo-900/20 text-white mb-10">
-        <div className="mb-6 sm:mb-8">
-          <h2 className="text-2xl font-bold mb-2">Create New Event</h2>
-          <p className="text-indigo-200">Deploy a new event and allocate seats automatically.</p>
+      {/* Stats */}
+      {loading ? <SkeletonStatsGrid items={4} /> : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          {statCards.map((card, i) => (
+            <div key={i} className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-5 shadow-lg group hover:border-white/20 transition-all duration-300">
+              <div className={`absolute -top-6 -right-6 w-20 h-20 rounded-full bg-gradient-to-br ${card.color} opacity-20 blur-2xl group-hover:opacity-30 transition-opacity`} />
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs font-extrabold tracking-widest text-white/40 uppercase">{card.label}</p>
+                <span className="text-xl">{card.icon}</span>
+              </div>
+              {card.chart ? (
+                <div className="flex items-center gap-3">
+                  <p className="text-3xl font-black text-white">{card.value}</p>
+                  <div className="flex-1"><Sparkline values={card.chart} stroke="#22c55e" fill="rgba(34,197,94,0.15)" /></div>
+                </div>
+              ) : (
+                <p className="text-3xl font-black text-white">{card.value}</p>
+              )}
+            </div>
+          ))}
         </div>
-        <form onSubmit={handleCreateEvent} className="grid grid-cols-1 md:grid-cols-4 gap-3 sm:gap-4">
-          <input className="w-full bg-white/10 border border-white/20 p-4 rounded-xl outline-none placeholder-white/50 text-white font-medium focus:ring-2 focus:ring-white/30" type="text" placeholder="Event Showcase Name" value={name} onChange={e => setName(e.target.value)} required />
-          <input className="w-full bg-white/10 border border-white/20 p-4 rounded-xl outline-none placeholder-white/50 text-white font-medium focus:ring-2 focus:ring-white/30" type="number" placeholder="Ticket Price (₹)" value={price} onChange={e => setPrice(e.target.value)} required min="1" />
-          <input className="w-full bg-white/10 border border-white/20 p-4 rounded-xl outline-none placeholder-white/50 text-white font-medium focus:ring-2 focus:ring-white/30" type="number" placeholder="Total Capacity" value={totalSeats} onChange={e => setTotalSeats(e.target.value)} required min="1" max="1000" />
-          <button type="submit" className="w-full py-4 bg-white text-indigo-900 font-extrabold rounded-xl hover:bg-gray-100 transition-colors shadow-lg">
-            Deploy Event
+      )}
+
+      {/* Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-10">
+        <div className="lg:col-span-2 relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-6">
+          <p className="text-sm font-black text-white mb-1">Top Events by Capacity</p>
+          <p className="text-xs text-white/40 font-semibold mb-4">Seats available per event</p>
+          <MiniBarChart values={capValues} labels={capLabels} />
+        </div>
+        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-6">
+          <p className="text-sm font-black text-white mb-1">Price Distribution</p>
+          <p className="text-xs text-white/40 font-semibold mb-4">Across your events</p>
+          <Sparkline values={eventPriceSeries} />
+        </div>
+      </div>
+
+      {/* Create Event */}
+      <div className="relative overflow-hidden rounded-3xl border border-violet-500/30 bg-gradient-to-tr from-indigo-900/60 to-violet-900/60 backdrop-blur-xl p-7 sm:p-8 shadow-2xl shadow-indigo-900/30 mb-10">
+        <div className="absolute -top-10 -right-10 w-40 h-40 bg-violet-500/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="mb-6 relative z-10">
+          <h2 className="text-2xl font-black text-white mb-2">🚀 Create New Event</h2>
+          <p className="text-indigo-300 text-sm font-semibold">Deploy a new event and allocate seats automatically.</p>
+        </div>
+        <form id="create-event-form" onSubmit={handleCreateEvent} className="relative z-10 grid grid-cols-1 md:grid-cols-4 gap-3">
+          <input
+            id="event-name-input"
+            className="w-full bg-white/10 border border-white/20 backdrop-blur p-4 rounded-2xl outline-none placeholder-white/40 text-white font-semibold focus:border-violet-400/60 focus:bg-white/15 focus:ring-2 focus:ring-violet-500/20 transition-all"
+            type="text" placeholder="Event Name" value={name} onChange={e => setName(e.target.value)} required
+          />
+          <input
+            id="event-price-input"
+            className="w-full bg-white/10 border border-white/20 backdrop-blur p-4 rounded-2xl outline-none placeholder-white/40 text-white font-semibold focus:border-violet-400/60 focus:bg-white/15 focus:ring-2 focus:ring-violet-500/20 transition-all"
+            type="number" placeholder="Ticket Price (₹)" value={price} onChange={e => setPrice(e.target.value)} required min="1"
+          />
+          <input
+            id="event-seats-input"
+            className="w-full bg-white/10 border border-white/20 backdrop-blur p-4 rounded-2xl outline-none placeholder-white/40 text-white font-semibold focus:border-violet-400/60 focus:bg-white/15 focus:ring-2 focus:ring-violet-500/20 transition-all"
+            type="number" placeholder="Total Capacity" value={totalSeats} onChange={e => setTotalSeats(e.target.value)} required min="1" max="1000"
+          />
+          <button
+            id="deploy-event-btn"
+            type="submit"
+            disabled={creating}
+            className="w-full py-4 bg-white text-indigo-900 font-extrabold rounded-2xl hover:bg-gray-100 transition-colors shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {creating ? '⏳ Deploying…' : '⚡ Deploy Event'}
           </button>
         </form>
       </div>
 
-      {/* Users for admin events */}
-      <div className="bg-white/70 backdrop-blur rounded-[2rem] border border-white/60 shadow-sm p-6 sm:p-8 mb-10">
+      {/* Event Audience */}
+      <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-6 sm:p-8 mb-10 shadow-lg">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-6">
-          <div className="min-w-0">
-            <h2 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">
-              Event Audience
-            </h2>
-            <p className="mt-1 text-gray-500 font-semibold">
-              Users who booked tickets for your events (confirmed bookings).
-            </p>
+          <div>
+            <h2 className="text-2xl font-black text-white tracking-tight">👥 Event Audience</h2>
+            <p className="mt-1 text-white/40 font-semibold text-sm">Users with confirmed bookings per event.</p>
           </div>
-          <div className="text-sm font-extrabold text-gray-600">
-            Events: {eventUsers.length}
-          </div>
+          <span className="text-sm font-extrabold text-white/40">Events: {eventUsers.length}</span>
         </div>
 
-        {loading ? (
-          <div className="rounded-3xl border border-gray-100 bg-white p-6">
-            <SkeletonText lines={4} />
-          </div>
-        ) : eventUsers.length === 0 ? (
-          <div className="rounded-3xl border border-gray-100 bg-white p-6 text-gray-500 font-semibold">
+        {loading ? <SkeletonText lines={4} /> : eventUsers.length === 0 ? (
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-white/40 font-semibold">
             No confirmed bookings yet for your events.
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {eventUsers.map(({ event, users, bookingsCount, seatsBooked, revenue }) => {
               const id = event?._id;
               const isOpen = openEventId === id;
               return (
-                <div key={id} className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+                <div key={id} className="overflow-hidden rounded-2xl border border-white/10 bg-white/5 hover:border-white/15 transition-all">
                   <button
                     type="button"
                     onClick={() => setOpenEventId(isOpen ? null : id)}
-                    className="w-full text-left px-5 sm:px-6 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 hover:bg-gray-50/60 transition"
+                    className="w-full text-left px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 hover:bg-white/5 transition"
                   >
                     <div className="min-w-0">
-                      <p className="text-lg font-black text-gray-900 truncate">{event?.name}</p>
-                      <p className="text-xs font-mono text-gray-400 break-all">{id}</p>
+                      <p className="text-base font-black text-white truncate">{event?.name}</p>
+                      <p className="text-xs font-mono text-white/25 break-all mt-0.5">{id}</p>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      <span className="px-3 py-1.5 rounded-full bg-indigo-50 text-indigo-700 text-xs font-extrabold">
-                        Bookings: {bookingsCount}
+                      <span className="px-3 py-1.5 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 text-xs font-extrabold">
+                        {bookingsCount} Bookings
                       </span>
-                      <span className="px-3 py-1.5 rounded-full bg-violet-50 text-violet-700 text-xs font-extrabold">
-                        Seats: {seatsBooked}
+                      <span className="px-3 py-1.5 rounded-full bg-violet-500/15 text-violet-300 border border-violet-500/30 text-xs font-extrabold">
+                        {seatsBooked} Seats
                       </span>
-                      <span className="px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-extrabold">
+                      <span className="px-3 py-1.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 text-xs font-extrabold">
                         ₹{revenue}
                       </span>
-                      <span className="px-3 py-1.5 rounded-full bg-gray-100 text-gray-700 text-xs font-extrabold">
-                        Users: {users?.length || 0}
+                      <span className="px-3 py-1.5 rounded-full bg-white/10 text-white/60 border border-white/15 text-xs font-extrabold">
+                        {users?.length || 0} Users
                       </span>
+                      <span className="text-white/30 text-xs font-extrabold self-center">{isOpen ? '▲' : '▼'}</span>
                     </div>
                   </button>
-
                   {isOpen && (
-                    <div className="px-5 sm:px-6 pb-6">
-                      <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    <div className="px-5 pb-5 border-t border-white/8 pt-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                         {(users || []).map(u => (
-                          <div key={u._id} className="rounded-2xl border border-gray-100 bg-gray-50/60 px-4 py-3">
-                            <p className="font-extrabold text-gray-900 truncate">{u.name || 'User'}</p>
-                            <p className="text-sm text-gray-600 truncate">{u.email}</p>
-                            <p className="text-xs font-mono text-gray-400 mt-1 break-all">{u._id}</p>
+                          <div key={u._id} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                            <p className="font-extrabold text-white truncate">{u.name || 'User'}</p>
+                            <p className="text-sm text-white/50 truncate">{u.email}</p>
+                            <p className="text-xs font-mono text-white/25 mt-1 break-all">{u._id}</p>
                           </div>
                         ))}
                         {(users || []).length === 0 && (
-                          <div className="rounded-2xl border border-gray-100 bg-gray-50/60 px-4 py-3 text-gray-500 font-semibold">
-                            No users found for this event yet.
-                          </div>
+                          <p className="text-white/30 font-semibold text-sm">No users found yet.</p>
                         )}
                       </div>
                     </div>
@@ -304,55 +260,62 @@ const AdminDashboard = () => {
         )}
       </div>
 
-      <div className="mt-14 mb-10 flex items-center justify-center gap-4">
-        <div className="hidden sm:block h-px w-20 bg-gradient-to-r from-transparent via-violet-400 to-transparent" />
-        <h2 className="text-3xl sm:text-4xl font-black text-center tracking-tight">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-600 via-fuchsia-600 to-indigo-600 drop-shadow-sm">
+      {/* Live Events Grid */}
+      <div className="flex items-center justify-center gap-4 mb-10">
+        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent" />
+        <h2 className="text-2xl sm:text-3xl font-black tracking-tight whitespace-nowrap">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-violet-400 to-fuchsia-400">
             Live Showcases
           </span>
         </h2>
-        <div className="hidden sm:block h-px w-20 bg-gradient-to-r from-transparent via-indigo-400 to-transparent" />
+        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-violet-500/50 to-transparent" />
       </div>
-      {loading ? (
-        <SkeletonCardGrid items={6} className="gap-6" />
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      {loading ? <SkeletonCardGrid items={6} /> : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {events.map(evt => (
-            <div key={evt._id} className="p-6 bg-white rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-xl transition-shadow relative overflow-hidden">
-              {/* Subtle card watermark */}
-              <img
-                src="/brand-ticket.png"
-                alt=""
-                aria-hidden="true"
-                className="pointer-events-none absolute -right-10 -bottom-12 w-72 opacity-[0.07] rotate-[-10deg] select-none"
-              />
-              <div>
-                <h3 className="text-xl font-bold text-indigo-600 mb-2">{evt.name}</h3>
-                <p className="font-mono text-xs text-gray-400 break-all bg-gray-50 p-2 rounded-lg border border-gray-100">{evt._id}</p>
-              </div>
-              <div className="mt-6 flex justify-between items-end border-t border-gray-100 pt-5">
-                <div className="flex flex-col">
-                  <span className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Capacity</span>
-                  <span className="text-gray-800 font-extrabold">{evt.totalSeats} Seats</span>
-                </div>
-                <div className="flex flex-col text-right">
-                  <span className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Price</span>
-                  <span className="text-indigo-600 font-extrabold text-xl">₹{evt.price}</span>
+            <div
+              key={evt._id}
+              id={`admin-event-${evt._id}`}
+              className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-6 flex flex-col justify-between hover:border-indigo-400/40 hover:bg-white/8 transition-all duration-300"
+            >
+              <div className="absolute -right-8 -top-8 w-28 h-28 bg-gradient-to-br from-indigo-500/15 to-violet-500/15 rounded-full blur-2xl group-hover:opacity-150 transition-all pointer-events-none" />
+              <img src="/brand-ticket.png" alt="" aria-hidden="true" className="pointer-events-none absolute -right-6 -bottom-8 w-48 opacity-[0.04] rotate-[-10deg] select-none" />
+
+              <div className="relative z-10">
+                <h3 className="text-lg font-black text-white mb-1 truncate">{evt.name}</h3>
+                <p className="font-mono text-xs text-white/20 break-all bg-white/5 border border-white/8 p-2 rounded-xl mb-4">{evt._id}</p>
+                <div className="flex justify-between items-center border-t border-white/8 pt-4">
+                  <div>
+                    <span className="text-[10px] font-extrabold uppercase tracking-widest text-white/30">Capacity</span>
+                    <p className="text-white font-extrabold">{evt.totalSeats} Seats</p>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-[10px] font-extrabold uppercase tracking-widest text-white/30">Price</span>
+                    <p className="text-violet-300 font-extrabold text-xl">₹{evt.price}</p>
+                  </div>
                 </div>
               </div>
 
-              <div className="mt-5 flex items-center justify-end gap-2">
+              <div className="relative z-10 mt-5">
                 <button
+                  id={`delete-event-${evt._id}`}
                   type="button"
                   onClick={() => handleDeleteEvent(evt._id, evt.name)}
                   disabled={deletingEventId === evt._id}
-                  className="rounded-xl px-4 py-2 font-extrabold text-white bg-red-600 hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed transition shadow-sm"
+                  className="w-full rounded-2xl px-4 py-2.5 font-extrabold text-red-300 border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 hover:border-red-400/50 hover:text-red-200 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {deletingEventId === evt._id ? 'Deleting…' : 'Delete'}
+                  {deletingEventId === evt._id ? '⏳ Deleting…' : '🗑️ Delete Event'}
                 </button>
               </div>
             </div>
           ))}
+          {events.length === 0 && (
+            <div className="col-span-full py-16 text-center">
+              <div className="text-5xl mb-4">🎭</div>
+              <p className="text-white/30 font-semibold">No events created yet. Deploy your first event above!</p>
+            </div>
+          )}
         </div>
       )}
     </div>

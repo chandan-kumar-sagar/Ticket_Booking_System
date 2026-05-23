@@ -26,10 +26,8 @@ exports.getEvents = async (req, res) => {
   let events;
 
   if (req.user.role === "admin") {
-    // Admin sees only their events
     events = await Event.find({ createdBy: req.user.id });
   } else {
-    // User sees all events
     events = await Event.find();
   }
 

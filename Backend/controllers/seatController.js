@@ -5,7 +5,6 @@ exports.reserveSeat = async (req, res) => {
     const { seats, eventId, seatId } = req.body;
     const userId = req.user.id;
 
-    // Support single-seat reserve: { seatId }
     if (seatId) {
       const seat = await Seat.findOneAndUpdate(
         { _id: seatId, status: "AVAILABLE" },
@@ -24,12 +23,10 @@ exports.reserveSeat = async (req, res) => {
       });
     }
 
-    // Bulk reserve: { eventId, seats: [] }
     if (!eventId || !seats || seats.length === 0) {
       return res.status(400).json({ msg: "EventId and seats required" });
     }
 
-    // ✅ Reserve only AVAILABLE seats
     const result = await Seat.updateMany(
       {
         _id: { $in: seats },
@@ -43,7 +40,6 @@ exports.reserveSeat = async (req, res) => {
       }
     );
 
-    // ✅ Check if all seats reserved
     if (result.modifiedCount !== seats.length) {
       return res.status(400).json({
         msg: "Some seats are already reserved or booked"
@@ -81,7 +77,6 @@ exports.createSeats = async (req, res) => {
 
 
 
-// Get seats by event
 exports.getSeatsByEvent = async (req, res) => {
   try {
     const { eventId } = req.params;
@@ -90,8 +85,8 @@ exports.getSeatsByEvent = async (req, res) => {
 
     res.json({
       message: "Seats fetched successfully",
-      eventId, // ✅ include eventId clearly
-      totalSeats: seats.length, // 🔥 useful info
+      eventId, 
+      totalSeats: seats.length,
       seats
     });
 

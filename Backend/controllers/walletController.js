@@ -6,19 +6,17 @@ exports.addMoney = async (req, res) => {
     const userId = req.user.id;
     const amount = Number(req.body.amount);
 
-    // ✅ Validation
     if (!amount || isNaN(amount) || amount <= 0) {
       return res.status(400).json({ msg: "Invalid amount" });
     }
 
-    // ✅ Create wallet if not exists (1 wallet per user)
+   
     let wallet = await Wallet.findOneAndUpdate(
       { userId },
-      { $inc: { balance: amount } }, // atomic update
-      { new: true, upsert: true } //  creates if not exists
+      { $inc: { balance: amount } }, 
+      { new: true, upsert: true } 
     );
 
-    // ✅ Create transaction record
     await Transaction.create({
       userId,
       type: "credit",
@@ -40,8 +38,8 @@ exports.addMoney = async (req, res) => {
 exports.getAllTransactions = async (req, res) => {
   try {
     const transactions = await Transaction.find()
-      .populate("userId", "name email role") // 🔥 show user details
-      .sort({ createdAt: -1 }); // latest first
+      .populate("userId", "name email role") 
+      .sort({ createdAt: -1 });
 
     res.json({
       message: "Transactions fetched successfully",
@@ -56,10 +54,10 @@ exports.getAllTransactions = async (req, res) => {
 
 exports.getHistory = async (req, res) => {
   try {
-    console.log("User ID:", req.user.id); // DEBUG
+    console.log("User ID:", req.user.id); 
 
     const transactions = await Transaction.find({
-      userId: req.user.id   // MUST MATCH ABOVE
+      userId: req.user.id   
     }).sort({ createdAt: -1 });
 
     console.log("Transactions:", transactions);

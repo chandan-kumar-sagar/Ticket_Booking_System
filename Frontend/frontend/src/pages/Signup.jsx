@@ -10,6 +10,7 @@ const Signup = () => {
   const [password, setPassword] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [showPass, setShowPass] = useState(false);
   const navigate = useNavigate();
 
   const handleSignup = async (e) => {
@@ -18,7 +19,6 @@ const Signup = () => {
       setSubmitting(true);
       const endpoint = isAdmin ? '/api/v1/Admin/admin/signup' : '/api/v1/user/user/signup';
       const { data } = await API.post(endpoint, { name, email, password });
-      
       alert(data.message || 'Successfully created your profile!');
       navigate('/');
     } catch (err) {
@@ -35,82 +35,180 @@ const Signup = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center py-10 sm:py-14">
-      <div className="p-6 sm:p-8 md:p-10 bg-white/80 backdrop-blur-2xl shadow-2xl shadow-indigo-500/10 border border-white/70 rounded-3xl w-full max-w-md relative overflow-hidden">
-        
-        <div className="absolute top-[-50px] right-[-50px] w-40 h-40 bg-indigo-400 rounded-full mix-blend-multiply filter blur-[50px] opacity-40 pointer-events-none"></div>
-        <div className="absolute bottom-[-50px] left-[-50px] w-40 h-40 bg-fuchsia-400 rounded-full mix-blend-multiply filter blur-[50px] opacity-40 pointer-events-none"></div>
+    <div className="flex flex-col items-center justify-center py-10 sm:py-16 px-4">
+      <div className="relative w-full max-w-md">
+        {/* Animated glow ring behind card */}
+        <div className="absolute -inset-1 rounded-[2rem] bg-gradient-to-r from-fuchsia-600/40 via-violet-600/40 to-cyan-600/40 blur-xl animate-pulse-slow pointer-events-none" />
 
-        <h2 className="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-violet-700 via-fuchsia-700 to-indigo-700 mb-7 sm:mb-8 text-center relative z-10 tracking-tight drop-shadow-[0_2px_12px_rgba(109,40,217,0.18)]">
-          {t('signup.title')}
-        </h2>
-        
-        <form onSubmit={handleSignup} className="flex flex-col gap-5 relative z-10">
-          <input
-            className="bg-white border border-gray-200 shadow-sm outline-none focus:ring-2 focus:ring-violet-500/60 focus:border-violet-300 p-4 rounded-2xl transition font-semibold text-gray-900 placeholder-gray-500"
-            type="text"
-            placeholder={t('signup.fullName')}
-            value={name}
-            onChange={e => setName(e.target.value)}
-            required
-            disabled={submitting}
-          />
-          <input
-            className="bg-white border border-gray-200 shadow-sm outline-none focus:ring-2 focus:ring-violet-500/60 focus:border-violet-300 p-4 rounded-2xl transition font-semibold text-gray-900 placeholder-gray-500"
-            type="email"
-            placeholder={t('signup.email')}
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            required
-            disabled={submitting}
-          />
-          <input
-            className="bg-white border border-gray-200 shadow-sm outline-none focus:ring-2 focus:ring-violet-500/60 focus:border-violet-300 p-4 rounded-2xl transition font-semibold text-gray-900 placeholder-gray-500"
-            type="password"
-            placeholder={t('signup.password')}
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            required
-            disabled={submitting}
-          />
-          
-          <div className="flex bg-gray-50 p-1.5 rounded-2xl border border-gray-200 mb-1 shadow-inner">
-            <button 
-              type="button"
-              onClick={() => setIsAdmin(false)}
-              className={`flex-1 py-3 text-sm font-extrabold transition-all rounded-xl ${
-                !isAdmin
-                  ? 'bg-white shadow-sm ring-1 ring-gray-200 text-violet-700'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              {t('signup.userRegister')}
-            </button>
-            <button 
-              type="button"
-              onClick={() => setIsAdmin(true)}
-              className={`flex-1 py-3 text-sm font-extrabold transition-all rounded-xl ${
-                isAdmin
-                  ? 'bg-white shadow-sm ring-1 ring-gray-200 text-indigo-700'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              {t('signup.adminRegister')}
-            </button>
+        {/* Dark glass card */}
+        <div className="relative p-7 sm:p-10 bg-white/5 backdrop-blur-2xl border border-white/15 rounded-[2rem] shadow-[0_25px_60px_rgba(0,0,0,0.5)] overflow-hidden">
+
+          {/* Inner nebula orbs */}
+          <div className="absolute -top-14 -right-14 w-44 h-44 bg-fuchsia-500/20 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-14 -left-14 w-44 h-44 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none" />
+
+          {/* Icon badge */}
+          <div className="flex justify-center mb-6">
+            <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-fuchsia-600 to-cyan-600 shadow-[0_8px_32px_rgba(217,70,239,0.5)] border border-white/20">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <circle cx="9" cy="7" r="4" stroke="white" strokeWidth="2"/>
+                <path d="M19 8v6M22 11h-6" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+            </div>
           </div>
-          
-          <button type="submit" className="mt-3 w-full bg-gradient-to-r from-violet-600 via-fuchsia-600 to-indigo-600 text-white font-extrabold py-4 rounded-2xl shadow-[0_10px_20px_rgba(109,40,217,0.25)] hover:shadow-[0_15px_25px_rgba(109,40,217,0.35)] hover:-translate-y-1 active:translate-y-0 transition-all duration-300">
-            {submitting ? 'Loading…' : t('signup.cta')}
-          </button>
-        </form>
-        
-        <p className="mt-7 sm:mt-8 text-center font-semibold text-gray-600 relative z-10 w-full pt-6 border-t border-gray-200/70">
-          {t('signup.already')}
-          <br />
-          <Link to="/" className="text-transparent bg-clip-text bg-gradient-to-r from-violet-700 via-fuchsia-700 to-indigo-700 font-black hover:underline transition-colors mt-2 inline-block">
-            {t('signup.goLogin')}
-          </Link>
-        </p>
+
+          {/* Title */}
+          <h1 className="text-3xl sm:text-4xl font-black text-center mb-2 tracking-tight leading-tight">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-300 via-violet-300 to-cyan-300">
+              {t('signup.title')}
+            </span>
+          </h1>
+          <p className="text-center text-sm text-white/40 font-semibold mb-8">
+            Join TicketHub and start booking 🎟️
+          </p>
+
+          <form onSubmit={handleSignup} className="flex flex-col gap-4">
+            {/* Name */}
+            <div className="relative group">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-fuchsia-400 transition-colors">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="2"/>
+                </svg>
+              </span>
+              <input
+                className="w-full bg-white/8 border border-white/12 backdrop-blur text-white placeholder-white/30 font-semibold pl-11 pr-4 py-4 rounded-2xl outline-none focus:border-fuchsia-400/60 focus:bg-white/12 focus:ring-2 focus:ring-fuchsia-500/20 transition-all duration-200"
+                type="text"
+                placeholder={t('signup.fullName')}
+                value={name}
+                onChange={e => setName(e.target.value)}
+                required
+                disabled={submitting}
+              />
+            </div>
+
+            {/* Email */}
+            <div className="relative group">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-fuchsia-400 transition-colors">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="m22 6-10 7L2 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </span>
+              <input
+                className="w-full bg-white/8 border border-white/12 backdrop-blur text-white placeholder-white/30 font-semibold pl-11 pr-4 py-4 rounded-2xl outline-none focus:border-fuchsia-400/60 focus:bg-white/12 focus:ring-2 focus:ring-fuchsia-500/20 transition-all duration-200"
+                type="email"
+                placeholder={t('signup.email')}
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                required
+                disabled={submitting}
+              />
+            </div>
+
+            {/* Password */}
+            <div className="relative group">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-fuchsia-400 transition-colors">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </span>
+              <input
+                className="w-full bg-white/8 border border-white/12 backdrop-blur text-white placeholder-white/30 font-semibold pl-11 pr-12 py-4 rounded-2xl outline-none focus:border-fuchsia-400/60 focus:bg-white/12 focus:ring-2 focus:ring-fuchsia-500/20 transition-all duration-200"
+                type={showPass ? 'text' : 'password'}
+                placeholder={t('signup.password')}
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                required
+                disabled={submitting}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPass(v => !v)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/70 transition-colors"
+                aria-label={showPass ? 'Hide password' : 'Show password'}
+              >
+                {showPass ? (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    <path d="M1 1l22 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                ) : (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" strokeWidth="2"/>
+                    <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2"/>
+                  </svg>
+                )}
+              </button>
+            </div>
+
+            {/* Role toggle */}
+            <div className="flex bg-white/5 p-1.5 rounded-2xl border border-white/10 mt-1">
+              <button
+                type="button"
+                id="signup-user-tab"
+                onClick={() => setIsAdmin(false)}
+                className={`flex-1 py-3 text-sm font-extrabold transition-all duration-200 rounded-xl ${
+                  !isAdmin
+                    ? 'bg-gradient-to-r from-fuchsia-600 to-violet-600 text-white shadow-lg shadow-fuchsia-500/30'
+                    : 'text-white/40 hover:text-white/70'
+                }`}
+              >
+                👤 {t('signup.userRegister')}
+              </button>
+              <button
+                type="button"
+                id="signup-admin-tab"
+                onClick={() => setIsAdmin(true)}
+                className={`flex-1 py-3 text-sm font-extrabold transition-all duration-200 rounded-xl ${
+                  isAdmin
+                    ? 'bg-gradient-to-r from-cyan-600 to-indigo-600 text-white shadow-lg shadow-cyan-500/30'
+                    : 'text-white/40 hover:text-white/70'
+                }`}
+              >
+                🛡️ {t('signup.adminRegister')}
+              </button>
+            </div>
+
+            {/* Submit */}
+            <button
+              id="signup-submit-btn"
+              type="submit"
+              disabled={submitting}
+              className="mt-2 w-full relative overflow-hidden font-extrabold py-4 rounded-2xl text-white transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed group"
+              style={{ background: 'linear-gradient(135deg, #d946ef, #a855f7, #06b6d4)' }}
+            >
+              <span className="relative z-10 flex items-center justify-center gap-2">
+                {submitting ? (
+                  <>
+                    <svg className="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="white" strokeWidth="4"/>
+                      <path className="opacity-75" fill="white" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                    </svg>
+                    Creating account…
+                  </>
+                ) : (
+                  <>{t('signup.cta')} →</>
+                )}
+              </span>
+              <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors duration-200" />
+            </button>
+          </form>
+
+          {/* Footer */}
+          <p className="mt-8 text-center text-sm text-white/40 font-semibold pt-6 border-t border-white/10">
+            {t('signup.already')}{' '}
+            <Link
+              to="/"
+              className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-cyan-400 font-black hover:opacity-80 transition-opacity ml-1"
+            >
+              {t('signup.goLogin')} →
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
